@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/lostposts")
+@RequestMapping("/lost")
 public class LostPostController {
 
     @Autowired
@@ -21,9 +21,9 @@ public class LostPostController {
         return ResponseEntity.ok(lostPostService.getAllLostPosts());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<LostPost> getLostPost(@PathVariable Long id) {
-        return lostPostService.getLostPostById(id)
+    @GetMapping("/{post_id}")
+    public ResponseEntity<LostPost> getLostPost(@PathVariable Long post_id) {
+        return lostPostService.getLostPostById(post_id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -31,20 +31,20 @@ public class LostPostController {
     @PostMapping
     public ResponseEntity<LostPost> createLostPost(@RequestBody LostPost lostPost) {
         LostPost created = lostPostService.createLostPost(lostPost);
-        URI location = URI.create("/api/lostposts/" + created.getId());
+        URI location = URI.create("/lost" + created.getId());
         return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<LostPost> updateLostPost(@PathVariable Long id, @RequestBody LostPost lostPost) {
-        return lostPostService.updateLostPost(id, lostPost)
+    @PutMapping("/{post_id}")
+    public ResponseEntity<LostPost> updateLostPost(@PathVariable Long post_id, @RequestBody LostPost lostPost) {
+        return lostPostService.updateLostPost(post_id, lostPost)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLostPost(@PathVariable Long id) {
-        boolean deleted = lostPostService.deleteLostPost(id);
+    @DeleteMapping("/{post_id}")
+    public ResponseEntity<Void> deleteLostPost(@PathVariable Long post_id) {
+        boolean deleted = lostPostService.deleteLostPost(post_id);
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
