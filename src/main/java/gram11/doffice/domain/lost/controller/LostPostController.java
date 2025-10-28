@@ -1,7 +1,7 @@
-package gram11.doffice.controller;
+package gram11.doffice.domain.lost.controller;
 
-import gram11.doffice.entity.LostPost;
-import gram11.doffice.lostPostsService.LostPostService;
+import gram11.doffice.domain.lost.entity.LostPost;
+import gram11.doffice.domain.lost.lostPostsService.LostPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

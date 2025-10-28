@@ -1,7 +1,7 @@
-package gram11.doffice.lostPostsService;
+package gram11.doffice.domain.lost.lostPostsService;
 
-import gram11.doffice.entity.LostPost;
-import gram11.doffice.repository.LostPostRepository;
+import gram11.doffice.domain.lost.entity.LostPost;
+import gram11.doffice.domain.lost.repository.LostPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

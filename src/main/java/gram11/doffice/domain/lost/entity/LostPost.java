@@ -1,4 +1,4 @@
-package gram11.doffice.entity;
+package gram11.doffice.domain.lost.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
