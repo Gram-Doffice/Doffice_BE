@@ -1,10 +1,16 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+<<<<<<< HEAD
     url: jdbc:mysql://192.168.1.29:3306/lost_post_db?useSSL=false&serverTimezone=UTC
     username: root1
     password: doctor99!
 
+=======
+    url: jdbc:mysql://localhost:3306/simple_crud?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: qwer
+>>>>>>> notice-crud
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,5 +18,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+<<<<<<< HEAD
     open-in-view: false
     database: mysql
+=======
+>>>>>>> notice-crud
