@@ -21,9 +21,9 @@ public class LostPostController {
         return ResponseEntity.ok(lostPostService.getAllLostPosts());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<LostPost> getLostPost(@PathVariable Long id) {
-        return lostPostService.getLostPostById(id)
+    @GetMapping("/{lost_id}")
+    public ResponseEntity<LostPost> getLostPost(@PathVariable Long lost_id) {
+        return lostPostService.getLostPostById(lost_id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -35,16 +35,16 @@ public class LostPostController {
         return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<LostPost> updateLostPost(@PathVariable Long id, @RequestBody LostPost lostPost) {
-        return lostPostService.updateLostPost(id, lostPost)
+    @PutMapping("/{lost_id}")
+    public ResponseEntity<LostPost> updateLostPost(@PathVariable Long lost_id, @RequestBody LostPost lostPost) {
+        return lostPostService.updateLostPost(lost_id, lostPost)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLostPost(@PathVariable Long id) {
-        boolean deleted = lostPostService.deleteLostPost(id);
+    @DeleteMapping("/{lost_id}")
+    public ResponseEntity<Void> deleteLostPost(@PathVariable Long lost_id) {
+        boolean deleted = lostPostService.deleteLostPost(lost_id);
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
