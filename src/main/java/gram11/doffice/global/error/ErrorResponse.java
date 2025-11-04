@@ -6,7 +6,17 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ErrorResponse {
-    private final String message;
-}
 
-// todo: error 부분은 나중에 할게용... 머리가 Boom 되어버렷어요
+    private final int status;
+    private final String code;
+    private final String message;
+
+    @Override
+    public String toString() {
+        return "{ " +
+                "status=" + status +
+                ", code='" + code +
+                ", message='" + message +
+                " }";
+    }
+}
