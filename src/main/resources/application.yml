@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:simple_crud}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:qwer}
+    url: ${MYSQL_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,7 +14,5 @@ spring:
     open-in-view: false
     database: mysql
   sentry:
-    dsn: https://0bfd5c01e0a1e8f6956ca3c1285c2895@o4510303685902336.ingest.us.sentry.io/4510303689965568
-    # Add data like request headers and IP for users,
-    # see https://docs.sentry.io/platforms/java/guides/spring-boot/data-management/data-collected/ for more info
+    dsn: ${SENTRY_DSN}
     send-default-pii: true
