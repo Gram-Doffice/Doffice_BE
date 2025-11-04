@@ -11,7 +11,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-<<<<<<< HEAD
     open-in-view: false
     database: mysql
   sentry:
