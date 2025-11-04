@@ -1,5 +1,6 @@
 package gram11.doffice.domain.notice.entity;
 
+import gram11.doffice.domain.manager.entity.Manager;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -22,10 +23,11 @@ public class Notice {
     @Column(columnDefinition = "varchar(2000)")
     private String content;
 
-    private String manager;
+    @ManyToOne()
+    private Manager manager;
 
     @Builder
-    public Notice(String title, String content, String manager) {
+    public Notice(String title, String content, Manager manager) {
         this.title = title;
         this.content = content;
         this.manager = manager;
