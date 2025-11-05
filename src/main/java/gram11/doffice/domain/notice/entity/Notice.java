@@ -1,6 +1,6 @@
 package gram11.doffice.domain.notice.entity;
 
-import gram11.doffice.domain.manager.entity.Manager;
+import gram11.doffice.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -23,15 +23,9 @@ public class Notice {
     @Column(columnDefinition = "varchar(2000)")
     private String content;
 
-    @ManyToOne()
-    private Manager manager;
-
-    @Builder
-    public Notice(String title, String content, Manager manager) {
-        this.title = title;
-        this.content = content;
-        this.manager = manager;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id", nullable = false)
+    private User user;
 
     public void updateNotice(String title, String content) {
         this.title = title;

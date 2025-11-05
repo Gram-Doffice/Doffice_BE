@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class NoticeService {
@@ -15,20 +17,29 @@ public class NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
 
+    // 공지사항 작성
     public void createNotice(CreateNoticeDto noticeDto) {
         Notice notice = new Notice();
         notice.updateNotice(noticeDto.getTitle(), noticeDto.getContent());
         noticeRepository.save(notice);
     }
 
+    // 공지사항 삭제
     public void deleteNotice(Long id) {
         noticeRepository.deleteById(id);
     }
 
+    // 공지글 상세 조회
     public Notice getNotice(Long id) {
         return noticeRepository.findById(id).orElseThrow(() -> new RuntimeException("공지 없음"));
     }
 
+    // 공지글 전체 조회
+    public List<Notice> getAllNotice() {
+        return noticeRepository.findAll();
+    }
+
+    // 공지사항 수정
     public void updateNotice(Long id, UpdateNoticeDto updateNoticeDto) {
         Notice notice = noticeRepository.findById(id).orElseThrow(() -> new RuntimeException("공지 없음"));
         notice.updateNotice(updateNoticeDto.getTitle(), updateNoticeDto.getContent());
