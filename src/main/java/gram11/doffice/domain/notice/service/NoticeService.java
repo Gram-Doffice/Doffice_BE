@@ -14,8 +14,7 @@ import java.util.List;
 @Service
 public class NoticeService {
 
-    @Autowired
-    private NoticeRepository noticeRepository;
+    private final NoticeRepository noticeRepository;
 
     // 공지사항 작성
     public void createNotice(CreateNoticeDto noticeDto) {
@@ -45,4 +44,6 @@ public class NoticeService {
         notice.updateNotice(updateNoticeDto.getTitle(), updateNoticeDto.getContent());
         noticeRepository.save(notice);
     }
+
+
 }
