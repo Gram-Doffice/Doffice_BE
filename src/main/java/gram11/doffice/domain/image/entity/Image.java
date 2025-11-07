@@ -21,6 +21,12 @@ public class Image {
     @JoinColumn(name = "notice_id")
     private Notice notice;
 
+    // Notice 관계 설정용 메서드
+    // 지피티가 하랬어요 난 몰라요
+    public void connectNotice(Notice notice) {
+        this.notice = notice;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lost_post_id")
     private LostPost lostPost;

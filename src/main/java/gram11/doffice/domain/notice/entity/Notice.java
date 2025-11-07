@@ -38,8 +38,9 @@ public class Notice {
         this.content = content;
     }
 
+    // 관계 설정용
     public void addImage(Image image) {
         images.add(image);
-        image.setNotice(this);
+        image.connectNotice(this);
     }
 }
