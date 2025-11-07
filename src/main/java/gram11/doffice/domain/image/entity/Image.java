@@ -25,21 +25,17 @@ public class Image {
     @JoinColumn(name = "lost_post_id")
     private LostPost lostPost;
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public static Image createNotice(String imageUrl, Notice notice) {
+        Image image = new Image();
+        image.imageUrl = imageUrl;
+        image.notice = notice;
+        return image;
     }
 
-    public void setNotice(Notice notice) {
-        this.notice = notice;
-        if (!notice.getImages().contains(this)) {
-            notice.getImages().add(this);
-        }
-    }
-
-//    public void setLostPost(LostPost lostPost) {
-//        this.lostPost = lostPost;
-//        if (!lostPost.getImages().contains(this)) {
-//            lostPost.getImages().add(this);
-//        }
+//    public static Image createLostPost(String imageUrl, LostPost lostPost) {
+//        Image image = new Image();
+//        image.imageUrl = imageUrl;
+//        image.lostPost = lostPost;
+//        return image;
 //    }
 }

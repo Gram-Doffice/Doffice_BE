@@ -35,9 +35,7 @@ public class NoticeImageService {
             file.transferTo(dest);
 
             // DB에 저장
-            Image image = new Image();
-            image.setImageUrl(filePath);
-            image.setNotice(notice);
+            Image image = Image.createNotice(filePath, notice);
             imageRepository.save(image);
         }
         return images;
