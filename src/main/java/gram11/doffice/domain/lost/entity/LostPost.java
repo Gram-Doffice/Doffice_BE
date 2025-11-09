@@ -1,8 +1,14 @@
 package gram11.doffice.domain.lost.entity;
 
+<<<<<<< Updated upstream
 import gram11.doffice.domain.image.entity.Image;
 import gram11.doffice.domain.user.entity.User; // ⭐ 추가
 import jakarta.persistence.*;
+=======
+import gram11.doffice.domain.user.entity.User;
+import jakarta.persistence.*;
+
+>>>>>>> Stashed changes
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +27,7 @@ public class LostPost {
     private String title;
     private String content;
 
+<<<<<<< Updated upstream
     // ⭐ 추가: User (작성자) 관계 - manager_id DB 오류 해결
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id", nullable = false)
@@ -53,3 +60,9 @@ public class LostPost {
         image.disconnectLostPost(); // ⭐ Image 엔티티 메서드 호출
     }
 }
+=======
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id", nullable = false)
+    private User user;
+}
+>>>>>>> Stashed changes

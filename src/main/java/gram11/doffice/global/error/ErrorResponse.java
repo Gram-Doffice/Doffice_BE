@@ -1,0 +1,25 @@
+<<<<<<< Updated upstream
+=======
+package gram11.doffice.global.error;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class ErrorResponse {
+
+    private final int status;
+    private final String code;
+    private final String message;
+
+    @Override
+    public String toString() {
+        return "{ " +
+                "status=" + status +
+                ", code='" + code +
+                ", message='" + message +
+                " }";
+    }
+}
+>>>>>>> Stashed changes

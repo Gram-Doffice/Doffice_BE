@@ -1,6 +1,9 @@
 package gram11.doffice.domain.notice.entity;
 
+<<<<<<< Updated upstream
 import gram11.doffice.domain.image.entity.Image;
+=======
+>>>>>>> Stashed changes
 import gram11.doffice.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -26,9 +29,12 @@ public class Notice {
     @Column(columnDefinition = "varchar(2000)")
     private String content;
 
+<<<<<<< Updated upstream
     @OneToMany()
     private List<Image> images = new ArrayList<>();
 
+=======
+>>>>>>> Stashed changes
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id", nullable = false)
     private User user;

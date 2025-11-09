@@ -13,13 +13,19 @@ spring:
         format_sql: true
     open-in-view: false
     database: mysql
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 30MB
-  sentry:
-    dsn: ${SENTRY_DSN}
-    send-default-pii: true
-
-file:
-  upload-dir: ${IMG_UPLOAD_DIR}
+#<<<<<<< Updated upstream
+#  servlet:
+#    multipart:
+#      max-file-size: 10MB
+#      max-request-size: 30MB
+#  sentry:
+#    dsn: ${SENTRY_DSN}
+#    send-default-pii: true
+#
+#file:
+#  upload-dir: ${IMG_UPLOAD_DIR}
+#=======
+#  sentry:
+#    dsn: ${SENTRY_DSN}
+#    send-default-pii: true
+#>>>>>>> Stashed changes
