@@ -1,14 +1,18 @@
 package gram11.doffice.domain.notice.entity;
 
+import gram11.doffice.domain.image.entity.Image;
+import gram11.doffice.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
-@Data
 @Entity
 public class Notice {
 
@@ -22,17 +26,21 @@ public class Notice {
     @Column(columnDefinition = "varchar(2000)")
     private String content;
 
-    private String manager;
+    @OneToMany()
+    private List<Image> images = new ArrayList<>();
 
-    @Builder
-    public Notice(String title, String content, String manager) {
-        this.title = title;
-        this.content = content;
-        this.manager = manager;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id", nullable = false)
+    private User user;
 
     public void updateNotice(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    // 관계 설정용
+    public void addImage(Image image) {
+        images.add(image);
+        image.connectNotice(this);
     }
 }

@@ -1,17 +1,16 @@
 package gram11.doffice.domain.lost.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import gram11.doffice.domain.image.entity.Image;
+import gram11.doffice.domain.user.entity.User; // ⭐ 추가
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class LostPost {
 
@@ -21,4 +20,36 @@ public class LostPost {
 
     private String title;
     private String content;
+
+    // ⭐ 추가: User (작성자) 관계 - manager_id DB 오류 해결
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id", nullable = false)
+    private User user;
+
+    @OneToMany(mappedBy = "lostPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
+
+    // ⭐ 필수: 모든 필수 필드를 받는 유일한 생성자
+    public LostPost(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+    }
+
+    // 글 수정
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    // 이미지 추가
+    public void addImage(Image image) {
+        images.add(image);
+    }
+
+    // 이미지 삭제 시 연관관계 해제 로직 추가
+    public void removeImage(Image image) {
+        images.remove(image);
+        image.disconnectLostPost(); // ⭐ Image 엔티티 메서드 호출
+    }
 }
