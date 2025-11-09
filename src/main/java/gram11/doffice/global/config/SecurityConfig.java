@@ -32,13 +32,17 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
 
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/auth/sign-in/**").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/lost/**").permitAll()
+//                        .requestMatchers("/lost/**").authenticated()
+//                        .requestMatchers(HttpMethod.GET, "/notice/**").permitAll()
+//                        .requestMatchers("/notice/**").authenticated()
+//                        .anyRequest().authenticated()
+//                )
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/sign-in/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/lost/**").permitAll()
-                        .requestMatchers("/lost/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/notice/**").permitAll()
-                        .requestMatchers("/notice/**").authenticated()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
 
                 .formLogin(form -> form

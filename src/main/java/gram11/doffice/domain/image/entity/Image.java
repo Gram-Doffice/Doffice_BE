@@ -17,31 +17,39 @@ public class Image {
 
     private String imageUrl;
 
+    // Notice와 연결
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id")
     private Notice notice;
 
-    // Notice 관계 설정용 메서드
-    // 지피티가 하랬어요 난 몰라요
-    public void connectNotice(Notice notice) {
-        this.notice = notice;
-    }
-
+    // LostPost와 연결
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lost_post_id")
     private LostPost lostPost;
 
+    // Notice 관계 설정
+    public void connectNotice(Notice notice) {
+        this.notice = notice;
+    }
+
+    // LostPost 관계 설정
+    public void connectLostPost(LostPost lostPost) {
+        this.lostPost = lostPost;
+    }
+
+    // Notice용 이미지 생성
     public static Image createNotice(String imageUrl, Notice notice) {
         Image image = new Image();
         image.imageUrl = imageUrl;
-        image.notice = notice;
+        image.connectNotice(notice);
         return image;
     }
 
-//    public static Image createLostPost(String imageUrl, LostPost lostPost) {
-//        Image image = new Image();
-//        image.imageUrl = imageUrl;
-//        image.lostPost = lostPost;
-//        return image;
-//    }
+    // LostPost용 이미지 생성
+    public static Image createLostPost(String imageUrl, LostPost lostPost) {
+        Image image = new Image();
+        image.imageUrl = imageUrl;
+        image.connectLostPost(lostPost);
+        return image;
+    }
 }

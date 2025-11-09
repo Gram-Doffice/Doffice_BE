@@ -2,19 +2,20 @@ package gram11.doffice.domain.image.service;
 
 import gram11.doffice.domain.image.entity.Image;
 import gram11.doffice.domain.image.repository.ImageRepository;
-import gram11.doffice.domain.notice.entity.Notice;
+import gram11.doffice.domain.lost.entity.LostPost;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class LostPostImageService {
 
+    private final ImageRepository imageRepository;
+
+    @Transactional
+    public Image addImageToLostPost(String imageUrl, LostPost post) {
+        Image image = Image.createLostPost(imageUrl, post);
+        return imageRepository.save(image);
+    }
 }
