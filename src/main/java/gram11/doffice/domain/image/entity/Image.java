@@ -31,10 +31,10 @@ public class Image {
     @JoinColumn(name = "lost_post_id")
     private LostPost lostPost;
 
-    public static Image createNotice(String imageUrl, Notice notice) {
+    public static Image createOfNotice(String imageUrl, Notice notice) {
         Image image = new Image();
         image.imageUrl = imageUrl;
-        image.notice = notice;
+        image.connectNotice(notice);
         return image;
     }
 

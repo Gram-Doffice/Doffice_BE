@@ -26,7 +26,7 @@ public class Notice {
     @Column(columnDefinition = "varchar(2000)")
     private String content;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +38,7 @@ public class Notice {
         this.content = content;
     }
 
-    // 관계 설정용
+    // 이미지 추가
     public void addImage(Image image) {
         images.add(image);
         image.connectNotice(this);

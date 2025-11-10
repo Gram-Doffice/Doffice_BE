@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,7 @@ public class NoticeImageService {
     private final ImageRepository imageRepository;
     private final FileProperties fileProperties;
 
-    public List<Image> saveImages (List<MultipartFile> files, Notice notice) throws Exception {
+    public List<Image> saveImages (List<MultipartFile> files, Notice notice) throws IOException {
         List<Image> images = new ArrayList<>();
 
         for (MultipartFile file : files){
@@ -35,8 +36,10 @@ public class NoticeImageService {
             file.transferTo(dest);
 
             // DB에 저장
-            Image image = Image.createNotice(filePath, notice);
+            Image image = Image.createOfNotice(filePath, notice);
             imageRepository.save(image);
+
+            images.add(image);
         }
         return images;
     }
