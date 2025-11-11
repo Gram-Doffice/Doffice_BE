@@ -37,6 +37,7 @@ public class Image {
         return image;
     }
 
+
     // LostPost 관련 메서드
     // 1. LostPost 관계 설정 (LostPostImageService에서 사용)
     public void connectLostPost(LostPost lostPost) {

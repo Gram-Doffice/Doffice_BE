@@ -13,3 +13,5 @@ public class LostPostRequestDto {
 
     // validation 설정은 필요 시 추가
 }
+
+
