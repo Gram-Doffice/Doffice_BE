@@ -69,5 +69,4 @@ public class LostPostImageService {
     public void deleteImageById(Long imageId) {
         imageRepository.deleteById(imageId);
     }
-
 }

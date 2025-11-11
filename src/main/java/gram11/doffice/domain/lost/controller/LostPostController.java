@@ -83,5 +83,4 @@ public class LostPostController {
     public void removeImage(@PathVariable Long id, @PathVariable Long imageId) {
         lostPostService.removeImage(id, imageId);
     }
-
 }

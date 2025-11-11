@@ -34,3 +34,4 @@ public class LostPostResponseDto {
         return dto;
     }
 }
+

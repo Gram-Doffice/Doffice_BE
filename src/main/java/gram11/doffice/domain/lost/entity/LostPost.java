@@ -63,5 +63,4 @@ public class LostPost {
         // Image 엔티티에서 LostPost 참조를 끊어줌
         image.disconnectLostPost();
     }
-
 }

@@ -55,7 +55,6 @@ public class LostPostService {
         return post;
     }
 
-
     // 이미지 추가
     @Transactional
     public LostPost addImages(Long id, List<MultipartFile> files) throws Exception {
