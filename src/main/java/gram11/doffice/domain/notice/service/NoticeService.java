@@ -5,12 +5,12 @@ import gram11.doffice.domain.image.repository.ImageRepository;
 import gram11.doffice.domain.image.service.NoticeImageService;
 import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
-import gram11.doffice.domain.notice.dto.requestDto.UploadImageDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.repository.NoticeRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,15 +25,15 @@ public class NoticeService {
 
     // 공지사항 작성
     @Transactional
-    public void createNotice(CreateNoticeDto createNoticeDto, UploadImageDto uploadImageDto) throws IOException {
+    public void createNotice(CreateNoticeDto request) throws IOException {
         Notice notice = new Notice();
-        notice.updateNotice(createNoticeDto.getTitle(), createNoticeDto.getContent());
+        notice.updateNotice(request.getTitle(), request.getContent());
 
         // 이미지 저장
-        if (uploadImageDto != null
-                && uploadImageDto.getImages() != null
-                && !uploadImageDto.getImages().isEmpty()) {
-            noticeImageService.saveImages(uploadImageDto.getImages(), notice);
+        if (request.getImages() != null
+                && request.getImages() != null
+                && !request.getImages().isEmpty()) {
+            noticeImageService.saveImages(request.getImages(), notice);
         }
 
         noticeRepository.save(notice);
@@ -70,23 +70,23 @@ public class NoticeService {
 
     // 공지사항 수정
     @Transactional
-    public void updateNotice(Long id, UpdateNoticeDto updateNoticeDto, UploadImageDto uploadImageDto) throws IOException {
+    public void updateNotice(Long id, UpdateNoticeDto request) throws IOException {
 
         // notice id 가져오기
         Notice notice = noticeRepository.findById(id).orElseThrow(()
                 -> new RuntimeException("존재하지 않는 게시글입니다."));
 
-        notice.updateNotice(updateNoticeDto.getTitle(), updateNoticeDto.getContent());
+        notice.updateNotice(request.getTitle(), request.getContent());
 
         // 이미지 저장
-        if (uploadImageDto != null
-                && uploadImageDto.getImages() != null
-                && !uploadImageDto.getImages().isEmpty()) {
-            noticeImageService.saveImages(uploadImageDto.getImages(), notice);
+        if (request.getImages() != null
+                && request.getImages() != null
+                && !request.getImages().isEmpty()) {
+            noticeImageService.saveImages(request.getImages(), notice);
         }
 
         // 게시글 수정사항 저장
-        notice.updateNotice(updateNoticeDto.getTitle(), updateNoticeDto.getContent());
+        notice.updateNotice(request.getTitle(), request.getContent());
         noticeRepository.save(notice);
     }
 }
