@@ -3,8 +3,6 @@ package gram11.doffice.domain.notice.entity;
 import gram11.doffice.domain.image.entity.Image;
 import gram11.doffice.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

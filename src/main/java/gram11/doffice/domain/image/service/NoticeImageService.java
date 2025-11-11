@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,16 +29,18 @@ public class NoticeImageService {
 
             // 파일명, 경로 설정
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            String filePath = fileProperties.getUploadDir() + fileName;
+            String filePath = Paths.get(fileProperties.getUploadDir(), fileName).toString();
 
             // 로컬에 저장
             File dest = new File(filePath);
             dest.getParentFile().mkdirs();
             file.transferTo(dest);
 
-            // DB에 저장
-            Image image = Image.createOfNotice(filePath, notice);
+            // DB에 저장할 URL
+            String imageUrl = "/images/notice/" + fileName;
+            Image image = Image.createOfNotice(imageUrl, notice);
             imageRepository.save(image);
+
 
             images.add(image);
         }
@@ -46,8 +49,11 @@ public class NoticeImageService {
 
     public void deleteImages(List<Image> images) {
         for (Image image : images) {
-            // 로컬 파일 삭제
-            File file = new File(image.getImageUrl());
+
+            // DB에 저장된 URL -> 로컬 경로 계산
+            String fileName = Paths.get(image.getImageUrl()).getFileName().toString();
+            File file = new File(Paths.get(fileProperties.getUploadDir(), fileName).toString());
+
             if (file.exists()) {
                 file.delete();
             }

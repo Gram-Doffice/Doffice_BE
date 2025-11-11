@@ -2,9 +2,9 @@ package gram11.doffice.domain.notice.controller;
 
 import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
-import gram11.doffice.domain.notice.dto.requestDto.UploadImageDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.service.NoticeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,10 +24,9 @@ public class NoticeController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void createNotice(
-            @RequestPart CreateNoticeDto noticeDto,
-            @RequestPart(required = false) UploadImageDto uploadImageDto)
+            @Valid @ModelAttribute("request") CreateNoticeDto noticeDto)
             throws IOException {
-        noticeService.createNotice(noticeDto, uploadImageDto);
+        noticeService.createNotice(noticeDto);
     }
 
     // 공지글 삭제
@@ -54,10 +53,9 @@ public class NoticeController {
     @PutMapping("/{notice_id}")
     public void updateNotice(
             @PathVariable("notice_id") Long parameter,
-            @RequestPart UpdateNoticeDto noticeDto,
-            @RequestPart(required = false) UploadImageDto uploadImageDto)
+            @Valid @ModelAttribute("request") UpdateNoticeDto noticeDto)
             throws IOException {
 
-        noticeService.updateNotice(parameter, noticeDto, uploadImageDto);
+        noticeService.updateNotice(parameter, noticeDto);
     }
 }
