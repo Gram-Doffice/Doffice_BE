@@ -18,17 +18,16 @@ public class Image {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "notice_id")
+    @JoinColumn(name = "notice_id", nullable = false)
     private Notice notice;
 
     // Notice 관계 설정용 메서드
-    // 지피티가 하랬어요 난 몰라요
     public void connectNotice(Notice notice) {
         this.notice = notice;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lost_post_id")
+    @JoinColumn(name = "lost_post_id", nullable = false)
     private LostPost lostPost;
 
     public static Image createOfNotice(String imageUrl, Notice notice) {

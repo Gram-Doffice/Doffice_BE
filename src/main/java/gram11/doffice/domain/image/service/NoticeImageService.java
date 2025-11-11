@@ -43,4 +43,18 @@ public class NoticeImageService {
         }
         return images;
     }
+
+    public void deleteImages(List<Image> images) {
+        for (Image image : images) {
+            // 로컬 파일 삭제
+            File file = new File(image.getImageUrl());
+            if (file.exists()) {
+                file.delete();
+            }
+
+            // DB에서 삭제
+            imageRepository.delete(image);
+        }
+    }
+
 }
