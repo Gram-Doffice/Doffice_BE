@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -23,5 +25,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PropertyReferenceException.class)
     public ResponseEntity<ErrorResponse> propertyReferenceExceptionHandler(PropertyReferenceException e) {
         return new ResponseEntity<>(new ErrorResponse(400, "COMMON-400", e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleIOException(IOException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("파일 처리 중 오류가 발생했습니다.");
     }
 }
