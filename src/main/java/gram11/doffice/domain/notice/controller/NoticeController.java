@@ -4,29 +4,34 @@ import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.service.NoticeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequestMapping("/notice")
 @RestController
+@RequiredArgsConstructor
 public class NoticeController {
 
-    @Autowired
-    NoticeService noticeService;
+    private final NoticeService noticeService;
 
     // 공지글 작성
-    @PostMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createNotice(@RequestBody CreateNoticeDto noticeDto) {
+    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void createNotice(
+            @Valid @ModelAttribute("request") CreateNoticeDto noticeDto)
+            throws IOException {
         noticeService.createNotice(noticeDto);
     }
 
     // 공지글 삭제
-    @DeleteMapping("/{notice_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{notice_id}")
     public void deleteNotice(@PathVariable("notice_id") Long parameter) {
         noticeService.deleteNotice(parameter);
     }
@@ -44,9 +49,13 @@ public class NoticeController {
     }
 
     // 공지글 수정
-    @PutMapping("/{notice_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateNotice(@PathVariable("notice_id") Long parameter, @RequestBody UpdateNoticeDto noticeDto) {
+    @PutMapping("/{notice_id}")
+    public void updateNotice(
+            @PathVariable("notice_id") Long parameter,
+            @Valid @ModelAttribute("request") UpdateNoticeDto noticeDto)
+            throws IOException {
+
         noticeService.updateNotice(parameter, noticeDto);
     }
 }
