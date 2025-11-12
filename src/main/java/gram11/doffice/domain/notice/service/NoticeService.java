@@ -5,8 +5,10 @@ import gram11.doffice.domain.image.repository.ImageRepository;
 import gram11.doffice.domain.image.service.NoticeImageService;
 import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
+import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.repository.NoticeRepository;
+import gram11.doffice.domain.user.dto.ResponseUserDto;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,9 +59,21 @@ public class NoticeService {
 
     // 공지글 상세 조회
     @Transactional
-    public Notice getNotice(Long id) {
-        return noticeRepository.findById(id).orElseThrow(()
-                -> new RuntimeException("존재하지 않는 게시글입니다."));
+    public ResponseNoticeDto getNotice(Long id) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 게시글입니다."));
+
+        ResponseUserDto userDto = new ResponseUserDto(
+                notice.getUser().getId(),
+                notice.getUser().getUsername()
+        );
+
+        return new ResponseNoticeDto(
+                notice.getId(),
+                notice.getTitle(),
+                notice.getContent(),
+                userDto
+        );
     }
 
     // 공지글 전체 조회

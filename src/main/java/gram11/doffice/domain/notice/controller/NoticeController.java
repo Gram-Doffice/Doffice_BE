@@ -2,6 +2,7 @@ package gram11.doffice.domain.notice.controller;
 
 import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
+import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.service.NoticeService;
 import jakarta.validation.Valid;
@@ -38,7 +39,7 @@ public class NoticeController {
 
     // 공지글 상세 조회
     @GetMapping("/{notice_id}")
-    public Notice getNotice(@PathVariable("notice_id") Long parameter) {
+    public ResponseNoticeDto getNotice(@PathVariable("notice_id") Long parameter) {
         return noticeService.getNotice(parameter);
     }
 

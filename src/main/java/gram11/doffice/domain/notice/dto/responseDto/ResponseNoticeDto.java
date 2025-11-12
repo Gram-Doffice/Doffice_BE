@@ -1,6 +1,6 @@
 package gram11.doffice.domain.notice.dto.responseDto;
 
-import gram11.doffice.domain.user.entity.User;
+import gram11.doffice.domain.user.dto.ResponseUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 public class ResponseNoticeDto {
 
+    private Long id;
     private String title;
     private String content;
-    private User user;
+    private ResponseUserDto user;
 }
