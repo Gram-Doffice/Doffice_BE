@@ -27,8 +27,13 @@ public class NoticeImageService {
         for (MultipartFile file : files){
             if (file.isEmpty()) continue;
 
+            String originalName = file.getOriginalFilename();
+            if (originalName == null || !originalName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+                continue; // 또는 예외 던지기
+            }
+
             // 파일명, 경로 설정
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String fileName = UUID.randomUUID() + "_" + originalName;
             String filePath = Paths.get(fileProperties.getUploadDir(), fileName).toString();
 
             // 로컬에 저장

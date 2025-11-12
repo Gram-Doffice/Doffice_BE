@@ -2,7 +2,6 @@ package gram11.doffice.domain.image.service;
 
 import gram11.doffice.domain.image.entity.Image;
 import gram11.doffice.domain.image.repository.ImageRepository;
-import gram11.doffice.domain.notice.entity.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.stereotype.Service;
