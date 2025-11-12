@@ -28,7 +28,7 @@ public class Notice {
     private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public void updateNotice(String title, String content) {
