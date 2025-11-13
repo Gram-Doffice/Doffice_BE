@@ -2,6 +2,7 @@ package gram11.doffice.domain.notice.entity;
 
 import gram11.doffice.domain.image.entity.Image;
 import gram11.doffice.domain.user.entity.User;
+import gram11.doffice.global.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Notice {
+public class Notice extends TimeBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class Notice {
     private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true) // 테스트용..
     private User user;
 
     public void updateNotice(String title, String content) {
