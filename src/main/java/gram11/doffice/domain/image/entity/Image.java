@@ -1,6 +1,6 @@
 package gram11.doffice.domain.image.entity;
 
-import gram11.doffice.domain.lost.entity.LostPost;
+import gram11.doffice.domain.lost.entity.Lost;
 import gram11.doffice.domain.notice.entity.Notice;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,10 +26,6 @@ public class Image {
         this.notice = notice;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lost_post_id")
-    private LostPost lostPost;
-
     public static Image createNotice(String imageUrl, Notice notice) {
         Image image = new Image();
         image.imageUrl = imageUrl;
@@ -37,23 +33,18 @@ public class Image {
         return image;
     }
 
-    // LostPost 관련 메서드
-    // 1. LostPost 관계 설정 (LostPostImageService에서 사용)
-    public void connectLostPost(LostPost lostPost) {
-        this.lostPost = lostPost;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lost_post_id")
+    private Lost lost;
+
+    public void connectLost(Lost lost) {
+        this.lost = lost;
     }
 
-    // 2. LostPost 연관관계 해제 (LostPost.removeImage에서 에러가 난 핵심 메서드)
-    public void disconnectLostPost() {
-        this.lostPost = null;
-    }
-
-    // 3. LostPost용 이미지 생성 (LostPostImageService에서 사용)
-    public static Image createLostPost(String imageUrl, LostPost lostPost) {
+    public static Image createLost(String imageUrl, Lost lost) {
         Image image = new Image();
         image.imageUrl = imageUrl;
-        // 위에서 추가한 connectLostPost 메서드를 사용하도록 구현 변경
-        image.connectLostPost(lostPost);
+        image.lost = lost;
         return image;
     }
 
