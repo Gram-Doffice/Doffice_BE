@@ -1,8 +1,7 @@
 package gram11.doffice.domain.lost.entity;
 
 
-import gram11.doffice.domain.image.entity.Image;
-import gram11.doffice.domain.user.entity.User;
+import gram11.doffice.domain.image.entity.LostImage;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +38,7 @@ public class Lost {
    // private User user;
 
     @OneToMany(mappedBy = "lost", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    private List<LostImage> lostImages = new ArrayList<>();
 
     @Builder
     public Lost(String title, String content) {
