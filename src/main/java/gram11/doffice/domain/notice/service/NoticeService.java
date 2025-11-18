@@ -44,6 +44,4 @@ public class NoticeService {
         notice.updateNotice(updateNoticeDto.getTitle(), updateNoticeDto.getContent());
         noticeRepository.save(notice);
     }
-
-
 }
