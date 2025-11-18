@@ -4,18 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@AllArgsConstructor
+@Builder
 @Getter
+@AllArgsConstructor
 public class ResponseNoticeAllDto {
 
-    private List<NoticeDto> notice;
+    private final List<NoticeDto> notice;
 
     @Getter
     @Builder
     public static class NoticeDto {
         private Long id;
         private String title;
+        private LocalDateTime createdAt;
     }
 }

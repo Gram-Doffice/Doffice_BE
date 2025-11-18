@@ -1,6 +1,6 @@
 package gram11.doffice.domain.image.service;
 
-import gram11.doffice.domain.image.entity.Image;
+import gram11.doffice.domain.image.entity.NoticeImage;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class NoticeImageService {
     private final FileProperties fileProperties;
 
     public void saveImages (List<MultipartFile> files, Long noticeId) throws IOException {
-        List<Image> images = new ArrayList<>();
+        List<NoticeImage> noticeImages = new ArrayList<>();
 
         // DB에서 notice 조회
         Notice notice = noticeRepository.findById(noticeId)
@@ -49,17 +49,17 @@ public class NoticeImageService {
 
             // DB에 저장할 URL
             String imageUrl = "/images/notice/" + fileName;
-            Image image = Image.createOfNotice(imageUrl, notice);
+            NoticeImage noticeImage = NoticeImage.createOfNotice(imageUrl, notice);
 
-            notice.addImage(image);
+            notice.addImage(noticeImage);
         }
     }
 
-    public void deleteImages(List<Image> images) {
-        for (Image image : images) {
+    public void deleteImages(List<NoticeImage> noticeImages) {
+        for (NoticeImage noticeImage : noticeImages) {
 
             // DB에 저장된 URL -> 로컬 경로 계산
-            String fileName = Paths.get(image.getImageUrl()).getFileName().toString();
+            String fileName = Paths.get(noticeImage.getImageUrl()).getFileName().toString();
             File file = new File(Paths.get(fileProperties.getUploadDir(), fileName).toString());
 
             if (file.exists()) {

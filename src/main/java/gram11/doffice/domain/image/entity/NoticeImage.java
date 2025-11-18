@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Image {
+public class NoticeImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,21 +26,10 @@ public class Image {
         this.notice = notice;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lost_post_id", nullable = false)
-    private LostPost lostPost;
-
-    public static Image createOfNotice(String imageUrl, Notice notice) {
-        Image image = new Image();
-        image.imageUrl = imageUrl;
-        image.connectNotice(notice);
-        return image;
+    public static NoticeImage createOfNotice(String imageUrl, Notice notice) {
+        NoticeImage noticeImage = new NoticeImage();
+        noticeImage.imageUrl = imageUrl;
+        noticeImage.connectNotice(notice);
+        return noticeImage;
     }
-
-//    public static Image createLostPost(String imageUrl, LostPost lostPost) {
-//        Image image = new Image();
-//        image.imageUrl = imageUrl;
-//        image.lostPost = lostPost;
-//        return image;
-//    }
 }

@@ -2,6 +2,7 @@ package gram11.doffice.domain.notice.controller;
 
 import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
+import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeAllDto;
 import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.service.NoticeService;
@@ -45,7 +46,7 @@ public class NoticeController {
 
     // 전체 공지사항 조회
     @GetMapping
-    public List<Notice> getAllNotice() {
+    public ResponseNoticeAllDto getAllNotice() {
         return noticeService.getAllNotice();
     }
 
