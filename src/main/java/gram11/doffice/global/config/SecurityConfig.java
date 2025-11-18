@@ -1,5 +1,6 @@
 package gram11.doffice.global.config;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,17 +26,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+                .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        // 모든 엔드포인트 인증 없이 접근 허용 (테스트용)
-                        .anyRequest().permitAll()
+                        .requestMatchers("/auth/sign-in/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/lost/**").permitAll()
+                        .requestMatchers("/lost/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/notice/**").permitAll()
+                        .requestMatchers("/notice/**").authenticated()
+                        .anyRequest().authenticated()
                 )
 
-                // formLogin, logout, httpBasic 등 모두 테스트용으로 비활성화
-                .formLogin(form -> form.disable())
-                .logout(logout -> logout.disable())
-                .httpBasic(httpBasic -> {}); // httpBasic은 남겨도 됨
+                .formLogin(form -> form
+                        .loginProcessingUrl("/auth/sign-in")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .successForwardUrl("/auth/login/success")
+                        .failureForwardUrl("/auth/login/failure")
+                        .permitAll()
+                )
+
+                .logout(logout -> logout
+                        .logoutUrl("/auth/sign-out")
+                        .logoutSuccessUrl("/auth/sign-out/success")
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .permitAll()
+                )
+
+                .httpBasic(httpBasic -> {});
 
         return http.build();
     }
