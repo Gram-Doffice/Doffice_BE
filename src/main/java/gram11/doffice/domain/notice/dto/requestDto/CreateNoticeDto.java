@@ -1,6 +1,5 @@
 package gram11.doffice.domain.notice.dto.requestDto;
 
-import gram11.doffice.domain.user.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

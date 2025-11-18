@@ -1,26 +1,27 @@
 package gram11.doffice.domain.notice.service;
 
-import gram11.doffice.domain.image.entity.Image;
-import gram11.doffice.domain.image.repository.ImageRepository;
 import gram11.doffice.domain.image.service.NoticeImageService;
 import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
+import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeAllDto;
+import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.repository.NoticeRepository;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import gram11.doffice.domain.notice.dto.responseDto.ResponseUserDto;
+import gram11.doffice.global.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final ImageRepository imageRepository;
     private final NoticeImageService noticeImageService;
 
     // 공지사항 작성
@@ -29,43 +30,73 @@ public class NoticeService {
         Notice notice = new Notice();
         notice.updateNotice(request.getTitle(), request.getContent());
 
-        // 이미지 저장
-        if (request.getImages() != null
-                && request.getImages() != null
-                && !request.getImages().isEmpty()) {
-            noticeImageService.saveImages(request.getImages(), notice);
-        }
-
         noticeRepository.save(notice);
+
+        // 이미지 저장
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            noticeImageService.saveImages(request.getImages(), notice.getId());
+        }
     }
 
     // 공지사항 삭제
     @Transactional
     public void deleteNotice(Long id) {
-        // 예외처리
-        if (!noticeRepository.existsById(id)) {
-            throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
-        }
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
 
         // 이미지 삭제 로직
-        List<Image> images = imageRepository.findAllByNoticeId(id);
-        noticeImageService.deleteImages(images);
+        if (notice.getNoticeImages() != null && !notice.getNoticeImages().isEmpty()) {
+            noticeImageService.deleteImages(notice.getNoticeImages());
+        }
 
         // 공지글 삭제
-        noticeRepository.deleteById(id);
+        noticeRepository.delete(notice);
     }
 
     // 공지글 상세 조회
-    @Transactional
-    public Notice getNotice(Long id) {
-        return noticeRepository.findById(id).orElseThrow(()
-                -> new RuntimeException("존재하지 않는 게시글입니다."));
+    @Transactional(readOnly = true)
+    public ResponseNoticeDto getNotice(Long id) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+
+        ResponseUserDto userDto = new ResponseUserDto(
+                notice.getUser().getId(),
+                notice.getUser().getUsername()
+        );
+
+        List<ResponseNoticeDto.ImageDto> imageDtos = notice.getNoticeImages().stream()
+                .map(image -> ResponseNoticeDto.ImageDto.builder()
+                        .id(image.getId())
+                        .imageUrl(image.getImageUrl())
+                        .build())
+                .collect(Collectors.toList());
+
+        return ResponseNoticeDto.builder()
+                .id(notice.getId())
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .createdAt(notice.getCreatedAt())
+                .user(userDto)
+                .images(imageDtos)
+                .build();
     }
 
     // 공지글 전체 조회
-    @Transactional
-    public List<Notice> getAllNotice() {
-        return noticeRepository.findAll();
+    @Transactional(readOnly = true)
+    public ResponseNoticeAllDto getAllNotice() {
+        List<Notice> notices = noticeRepository.findAll();
+
+        List<ResponseNoticeAllDto.NoticeDto> noticeDtos = notices.stream()
+                .map(notice -> ResponseNoticeAllDto.NoticeDto.builder()
+                        .id(notice.getId())
+                        .title(notice.getTitle())
+                        .build())
+                .collect(Collectors.toList());
+
+        // Builder를 사용하여 ResponseNoticeAllDto 생성
+        return ResponseNoticeAllDto.builder()
+                .notice(noticeDtos)
+                .build();
     }
 
     // 공지사항 수정
@@ -73,16 +104,18 @@ public class NoticeService {
     public void updateNotice(Long id, UpdateNoticeDto request) throws IOException {
 
         // notice id 가져오기
-        Notice notice = noticeRepository.findById(id).orElseThrow(()
-                -> new RuntimeException("존재하지 않는 게시글입니다."));
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
 
-        notice.updateNotice(request.getTitle(), request.getContent());
+        // 기존 이미지 삭제
+        if (notice.getNoticeImages() != null && !notice.getNoticeImages().isEmpty()) {
+            noticeImageService.deleteImages(notice.getNoticeImages());
+            notice.getNoticeImages().clear();
+        }
 
         // 이미지 저장
-        if (request.getImages() != null
-                && request.getImages() != null
-                && !request.getImages().isEmpty()) {
-            noticeImageService.saveImages(request.getImages(), notice);
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            noticeImageService.saveImages(request.getImages(), notice.getId());
         }
 
         // 게시글 수정사항 저장

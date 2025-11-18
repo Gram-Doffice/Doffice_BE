@@ -1,18 +1,21 @@
 package gram11.doffice.domain.notice.entity;
 
-import gram11.doffice.domain.image.entity.Image;
+import gram11.doffice.domain.image.entity.NoticeImage;
 import gram11.doffice.domain.user.entity.User;
+import gram11.doffice.global.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class Notice {
+public class Notice extends TimeBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +28,15 @@ public class Notice {
     private String content;
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    private List<NoticeImage> noticeImages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @CreationTimestamp
+    @Column(name="created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public void updateNotice(String title, String content) {
         this.title = title;
@@ -37,8 +44,8 @@ public class Notice {
     }
 
     // 이미지 추가
-    public void addImage(Image image) {
-        images.add(image);
-        image.connectNotice(this);
+    public void addImage(NoticeImage noticeImage) {
+        noticeImages.add(noticeImage);
+        noticeImage.connectNotice(this);
     }
 }
