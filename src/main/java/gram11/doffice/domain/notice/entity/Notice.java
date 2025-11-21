@@ -34,10 +34,6 @@ public class Notice extends TimeBaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @CreationTimestamp
-    @Column(name="created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
     public void updateNotice(String title, String content) {
         this.title = title;
         this.content = content;
