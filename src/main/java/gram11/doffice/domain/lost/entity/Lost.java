@@ -22,7 +22,7 @@ public class Lost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long id;
 
     @Column(length = 100)
     private String title;
@@ -32,10 +32,6 @@ public class Lost {
 
     @CreatedDate
     private LocalDateTime createdDate;
-
-   // @ManyToOne(fetch = FetchType.LAZY)
-   //@JoinColumn(name = "manager_id", nullable = false)
-   // private User user;
 
     @OneToMany(mappedBy = "lost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LostImage> lostImages = new ArrayList<>();
