@@ -1,13 +1,12 @@
 package gram11.doffice.domain.image.service;
 
-import gram11.doffice.domain.image.entity.Image;
+import gram11.doffice.domain.image.entity.LostImage;
 import gram11.doffice.domain.image.repository.ImageRepository;
 import gram11.doffice.domain.lost.entity.Lost;
-import gram11.doffice.domain.notice.entity.Notice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.transaction.annotation.Transactional; // ⬅️ @Transactional 사용을 위해 추가해야 함
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,8 +20,8 @@ public class LostImageService {
     private final ImageRepository imageRepository;
     private final FileProperties fileProperties;
 
-    public List<Image> saveImages (List<MultipartFile> files, Lost lost) throws Exception {
-        List<Image> images = new ArrayList<>();
+    public List<LostImage> saveImages (List<MultipartFile> files, Lost lost) throws Exception {
+        List<LostImage> lostImages = new ArrayList<>();
 
         for (MultipartFile file : files){
             if (file.isEmpty()) continue;
@@ -37,15 +36,15 @@ public class LostImageService {
             file.transferTo(dest);
 
             // DB에 저장
-            Image image = Image.createLost(filePath, lost);
-            imageRepository.save(image);
-            images.add(image);
+            LostImage lostImage = LostImage.createLost(filePath, lost);
+            imageRepository.save(lostImage);
+            lostImages.add(lostImage);
         }
 
-        return images;
+        return lostImages;
     }
 
-    public Image getImage(Long imageId) {
+    public LostImage getImage(Long imageId) {
         // 이미지가 존재하지 않을 경우 예외 처리 필요
         return imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("이미지가 없습니다."));
@@ -54,16 +53,16 @@ public class LostImageService {
 
     @Transactional
     public void deleteImage(Long imageId) {
-        Image image = imageRepository.findById(imageId)
+        LostImage lostImage = imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("이미지가 없습니다."));
 
         // 1. 로컬 파일 삭제 (실제 파일 경로 사용)
-        File file = new File(image.getImageUrl());
+        File file = new File(lostImage.getImageUrl());
         if (file.exists()) {
             file.delete();
         }
 
         // 2. DB 기록 삭제
-        imageRepository.delete(image);
+        imageRepository.delete(lostImage);
     }
 }
