@@ -58,10 +58,10 @@ public class LostController {
 
     @PostMapping (value = "/{lost_id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadImages(
-            @PathVariable Long lostId,
+            @PathVariable Long id,
             @RequestParam("files") List<MultipartFile> files) throws Exception {
 
-        Lost lost = lostService.getLost(lostId);
+        Lost lost = lostService.getLost(id);
 
         lostImageService.saveImages(files, lost);
 
