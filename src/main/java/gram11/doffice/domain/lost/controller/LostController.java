@@ -5,8 +5,6 @@ import gram11.doffice.domain.image.service.LostImageService;
 import gram11.doffice.domain.lost.dto.requestDto.RequestLostDto;
 import gram11.doffice.domain.lost.entity.Lost;
 import gram11.doffice.domain.lost.service.LostService;
-import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
-import gram11.doffice.domain.notice.entity.Notice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,15 +56,15 @@ public class LostController {
         lostService.updateLost(parameter, requestLostDto);
     }
 
-    @PostMapping (value = "/{lostId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping (value = "/{lost_id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadImages(
-            @PathVariable Long lostId,
+            @PathVariable Long id,
             @RequestParam("files") List<MultipartFile> files) throws Exception {
 
-        Lost lost = lostService.getLost(lostId);
+        Lost lost = lostService.getLost(id);
 
         lostImageService.saveImages(files, lost);
 
-        return ResponseEntity.ok("Images uploaded successfully.");
+        return ResponseEntity.ok(" ");
     }
 }

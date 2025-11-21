@@ -1,4 +1,4 @@
-package gram11.doffice.domain.lost.dto.reponseDto;
+package gram11.doffice.domain.lost.dto.responseDto;
 
 import gram11.doffice.domain.user.entity.User;
 import lombok.AllArgsConstructor;
