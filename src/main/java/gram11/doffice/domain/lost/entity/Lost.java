@@ -2,6 +2,7 @@ package gram11.doffice.domain.lost.entity;
 
 
 import gram11.doffice.domain.image.entity.LostImage;
+import gram11.doffice.global.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,9 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@EnableJpaAuditing
-
-public class Lost {
+public class Lost extends TimeBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

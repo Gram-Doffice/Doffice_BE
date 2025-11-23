@@ -22,7 +22,6 @@ public class NoticeImageService {
     private final FileProperties fileProperties;
 
     public void saveImages (List<MultipartFile> files, Long noticeId) throws IOException {
-        List<NoticeImage> noticeImages = new ArrayList<>();
 
         // DB에서 notice 조회
         Notice notice = noticeRepository.findById(noticeId)
