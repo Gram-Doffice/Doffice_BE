@@ -18,7 +18,7 @@ public class LostImage {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lost_post_id")
+    @JoinColumn(name = "lost_id", nullable = false)
     private Lost lost;
 
     public void connectLost(Lost lost) {
@@ -28,7 +28,7 @@ public class LostImage {
     public static LostImage createLost(String imageUrl, Lost lost) {
         LostImage lostImage = new LostImage();
         lostImage.imageUrl = imageUrl;
-        lostImage.lost = lost;
+        lostImage.connectLost(lost);;
         return lostImage;
     }
 
