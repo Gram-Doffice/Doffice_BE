@@ -1,0 +1,53 @@
+package gram11.doffice.domain.lost.entity;
+
+
+import gram11.doffice.domain.image.entity.LostImage;
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
+
+public class Lost {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(length = 100)
+    private String title;
+
+    @Column(length=2000)
+    private String content;
+
+    @OneToMany(mappedBy = "lost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LostImage> lostImages = new ArrayList<>();
+
+    @Builder
+    public Lost(String title, String content) {
+        this.title = title;
+        this.content = content;
+        //this.user = user;
+    }
+
+    public void updateLost(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public void addLostImage(LostImage lostImage) {
+        this.lostImages.add(lostImage);
+        lostImage.connectLost(this);
+    }
+}
