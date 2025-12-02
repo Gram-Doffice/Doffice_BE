@@ -1,70 +1,70 @@
 package gram11.doffice.domain.lost.controller;
 
-
-import gram11.doffice.domain.image.service.LostImageService;
 import gram11.doffice.domain.lost.dto.requestDto.RequestLostDto;
 import gram11.doffice.domain.lost.entity.Lost;
 import gram11.doffice.domain.lost.service.LostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lost")
 public class LostController {
-    @Autowired
-    LostService lostService;
-    private final LostImageService lostImageService;
 
-    //분실물 작성
-    @PostMapping("/post")
+    private final LostService lostService;
+
+    private final ObjectMapper objectMapper;
+
+    // 분실물 작성 & 이미지 업로드
+    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void creataLost(@RequestBody RequestLostDto requestLostDto) {
-        lostService.createLost(requestLostDto);
+    public void createLost(
+            @RequestPart("data") String requestLostDtoJson,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+
+
+        RequestLostDto requestLostDto = objectMapper.readValue(requestLostDtoJson, RequestLostDto.class);
+
+        lostService.createLost(requestLostDto, files);
     }
 
-    //분실물 삭제
+    // 분실물 수정
+    @PutMapping(value = "/{lost_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateLost(
+            @PathVariable("lost_id") Long lostId,
+            @RequestPart("data") String requestLostDtoJson,
+            @RequestPart(value = "newFiles", required = false) List<MultipartFile> newFiles,
+            @RequestPart(value = "deletedImageIds", required = false) List<Long> deletedImageIds) throws IOException {
+
+        // JSON 문자열을 DTO 객체로 변환
+        RequestLostDto requestLostDto = objectMapper.readValue(requestLostDtoJson, RequestLostDto.class);
+
+        lostService.updateLost(lostId, requestLostDto, newFiles, deletedImageIds);
+    }
+
+    // 분실물 삭제
     @DeleteMapping("/{lost_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteNotice(@PathVariable("lost_id") Long parameter) {
-        lostService.deleteLost(parameter);
+    public void deleteLost(@PathVariable("lost_id") Long lostId) {
+        lostService.deleteLost(lostId);
     }
 
-    //분실물 상세 조회
     @GetMapping("/{lost_id}")
-    public Lost getLost(@PathVariable("lost_id") Long parameter) {
-        return lostService.getLost(parameter);
+    public Lost getLost(@PathVariable("lost_id") Long lostId) {
+        return lostService.getLost(lostId);
     }
 
-    // 전체 분실물 조회
     @GetMapping
     public List<Lost> getAllLost() {
         return lostService.getAllLost();
     }
 
-    // 분실물 수정
-    @PutMapping("/{lost_id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateLost(@PathVariable("lost_id") Long parameter, @RequestBody RequestLostDto requestLostDto) {
-        lostService.updateLost(parameter, requestLostDto);
-    }
-
-    @PostMapping (value = "/{lost_id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadImages(
-            @PathVariable Long id,
-            @RequestParam("files") List<MultipartFile> files) throws Exception {
-
-        Lost lost = lostService.getLost(id);
-
-        lostImageService.saveImages(files, lost);
-
-        return ResponseEntity.ok(" ");
-    }
 }

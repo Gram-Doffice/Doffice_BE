@@ -4,7 +4,6 @@ import gram11.doffice.domain.notice.dto.requestDto.CreateNoticeDto;
 import gram11.doffice.domain.notice.dto.requestDto.UpdateNoticeDto;
 import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeAllDto;
 import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeDto;
-import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.service.NoticeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @RequestMapping("/notice")
 @RestController
