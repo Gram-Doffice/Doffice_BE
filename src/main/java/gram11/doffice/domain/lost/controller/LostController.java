@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/lost")
+@RequestMapping("/post/lost")
 public class LostController {
 
     private final LostService lostService;
@@ -36,10 +36,10 @@ public class LostController {
     }
 
     // 분실물 수정
-    @PutMapping(value = "/{lost_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/post/lost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateLost(
-            @PathVariable("lost_id") Long lostId,
+            @PathVariable("/post/lost") Long lostId,
             @RequestPart("data") String requestLostDtoJson,
             @RequestPart(value = "newFiles", required = false) List<MultipartFile> newFiles,
             @RequestPart(value = "deletedImageIds", required = false) List<Long> deletedImageIds) throws IOException {
@@ -51,14 +51,14 @@ public class LostController {
     }
 
     // 분실물 삭제
-    @DeleteMapping("/{lost_id}")
+    @DeleteMapping("/post/lost")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteLost(@PathVariable("lost_id") Long lostId) {
+    public void deleteLost(@PathVariable("/post/lost") Long lostId) {
         lostService.deleteLost(lostId);
     }
 
-    @GetMapping("/{lost_id}")
-    public Lost getLost(@PathVariable("lost_id") Long lostId) {
+    @GetMapping("/post/lost")
+    public Lost getLost(@PathVariable("/post/lost") Long lostId) {
         return lostService.getLost(lostId);
     }
 
