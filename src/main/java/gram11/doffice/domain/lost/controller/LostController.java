@@ -66,5 +66,4 @@ public class LostController {
     public List<Lost> getAllLost() {
         return lostService.getAllLost();
     }
-
 }
