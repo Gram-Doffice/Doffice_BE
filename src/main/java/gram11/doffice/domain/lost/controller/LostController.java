@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/lost")
+@RequestMapping("/v1/lost")
 public class LostController {
 
     private final LostService lostService;
