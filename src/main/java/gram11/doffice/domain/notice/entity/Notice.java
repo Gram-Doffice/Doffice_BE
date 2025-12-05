@@ -6,9 +6,7 @@ import gram11.doffice.global.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +19,10 @@ public class Notice extends TimeBaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "varchar(100)", nullable = false)
+    @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(columnDefinition = "varchar(2000)")
+    @Column(length = 2000)
     private String content;
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,10 +31,6 @@ public class Notice extends TimeBaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @CreationTimestamp
-    @Column(name="created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
     public void updateNotice(String title, String content) {
         this.title = title;

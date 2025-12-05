@@ -2,24 +2,19 @@ package gram11.doffice.domain.lost.entity;
 
 
 import gram11.doffice.domain.image.entity.LostImage;
+import gram11.doffice.global.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-
-public class Lost {
+public class Lost extends TimeBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

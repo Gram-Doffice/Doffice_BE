@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +21,6 @@ public class NoticeImageService {
     private final FileProperties fileProperties;
 
     public void saveImages (List<MultipartFile> files, Long noticeId) throws IOException {
-        List<NoticeImage> noticeImages = new ArrayList<>();
 
         // DB에서 notice 조회
         Notice notice = noticeRepository.findById(noticeId)

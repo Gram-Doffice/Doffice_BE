@@ -1,6 +1,5 @@
 package gram11.doffice.domain.image.entity;
 
-import gram11.doffice.domain.lost.entity.Lost;
 import gram11.doffice.domain.notice.entity.Notice;
 import jakarta.persistence.*;
 import lombok.Getter;
