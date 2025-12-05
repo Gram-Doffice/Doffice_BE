@@ -23,3 +23,9 @@ spring:
 
 file:
   upload-dir: ${IMG_UPLOAD_DIR}
+
+manager:
+  initial:
+    username: ${MANAGER_USERNAME}
+    password: ${MANAGER_PASSWORD}
+    enabled: true
