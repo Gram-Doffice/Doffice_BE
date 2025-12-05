@@ -1,40 +1,25 @@
 name: Build and Deploy via HTTPS
-
 on:
   push:
     branches: [ "develop" ]
-
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. 코드 체크아웃
       - name: Checkout
         uses: actions/checkout@v3
-
-      # 2. JDK 설정
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      # 3. Spring JAR 빌드 (Gradle 사용)
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew clean build -x test
-
-      # Maven 사용 시 (현재는 비활성화)
-      # - name: Build with Maven
-      #   run: mvn -B package --file pom.xml
-
-      # 4. HTTPS로 JAR 업로드
+          ./gradlew clean build -x test -x sentryBundleSourcesJava
       - name: Upload JAR via HTTPS
         run: |
           JAR_FILE=$(ls build/libs/*.jar | head -n 1)
-
           curl -X POST \
             -H "X-API-KEY: ${{ secrets.DEPLOY_API_KEY }}" \
             -F "file=@${JAR_FILE}" \
