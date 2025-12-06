@@ -8,7 +8,7 @@ import gram11.doffice.domain.post.presentaton.dto.response.PostDetailResponse;
 import gram11.doffice.domain.post.domain.Post;
 import gram11.doffice.domain.post.domain.repository.PostRepository;
 import gram11.doffice.domain.post.presentaton.dto.response.UserResponse;
-import gram11.doffice.global.exception.PostNotFoundException;
+import gram11.doffice.domain.post.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package gram11.doffice.global.exception;
+package gram11.doffice.domain.post.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
