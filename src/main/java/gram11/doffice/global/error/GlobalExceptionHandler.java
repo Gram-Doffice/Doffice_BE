@@ -1,6 +1,9 @@
 package gram11.doffice.global.error;
 
-import org.springframework.data.mapping.PropertyReferenceException;
+import gram11.doffice.global.error.exception.DofficeException;
+import gram11.doffice.global.error.exception.ErrorResponse;
+import gram11.doffice.global.error.exception.ErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,34 +11,66 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // DofficeException 처리
+    @ExceptionHandler(DofficeException.class)
+    public ResponseEntity<ErrorResponse> handleDofficeException(DofficeException e) {
+        log.error("DofficeException : {}", e.getMessage());
+
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponse response = ErrorResponse.builder()
+                .status(errorCode.getStatus())
+                .message(errorCode.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(response);
+    }
+
+    // @Valid 검증 실패 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ErrorResponse> validatorExceptionHandler(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>(
-                new ErrorResponse(
-                        400,
-                        "COMMON-400",
-                        e.getBindingResult().getAllErrors().get(0).getDefaultMessage()),
-                HttpStatus.BAD_REQUEST);
-    }
+    public ResponseEntity<Map<String, String>> handleValidationException(
+            MethodArgumentNotValidException e) {
+        log.error("MethodArgumentNotValidException: {}", e.getMessage());
 
-    @ExceptionHandler(PropertyReferenceException.class)
-    public ResponseEntity<ErrorResponse> propertyReferenceExceptionHandler(PropertyReferenceException e) {
-        return new ResponseEntity<>(new ErrorResponse(400, "COMMON-400", e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getFieldErrors().forEach(error -> {
+            String field = error.getField();
+            String message = error.getDefaultMessage();
+            errors.put(field, message);
+        });
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errors);
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleIOException(IOException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("파일 처리 중 오류가 발생했습니다.");
+    }
+
+    // 예상치 못한 오류 처리
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("Unexpected Exception : {}", e.getMessage());
+
+        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        ErrorResponse response = ErrorResponse.builder()
+                .status(errorCode.getStatus())
+                .message(errorCode.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(response);
     }
 }
