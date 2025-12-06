@@ -52,10 +52,8 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/sign-in/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/lost/**").permitAll()
-                        .requestMatchers("/lost/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/notice/**").permitAll()
-                        .requestMatchers("/notice/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/post/**").permitAll()
+                        .requestMatchers("/post/**").authenticated()
                         .anyRequest().authenticated()
                 )
 
