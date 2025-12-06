@@ -1,4 +1,4 @@
-package gram11.doffice.domain.notice.dto.requestDto;
+package gram11.doffice.domain.post.presentaton.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UpdateNoticeDto {
+public class UpdatePostRequest {
 
     @NotBlank(message = "제목을 작성해주세요.")
     @Size(max = 100, message = "최대 100자까지 작성할 수 있습니다.")

@@ -1,6 +1,6 @@
 package gram11.doffice.domain.image.entity;
 
-import gram11.doffice.domain.notice.entity.Notice;
+import gram11.doffice.domain.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class NoticeImage {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,17 +18,17 @@ public class NoticeImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id", nullable = false)
-    private Notice notice;
+    private Post post;
 
     // Notice 관계 설정용 메서드
-    public void connectNotice(Notice notice) {
-        this.notice = notice;
+    public void connectNotice(Post post) {
+        this.post = post;
     }
 
-    public static NoticeImage createOfNotice(String imageUrl, Notice notice) {
-        NoticeImage noticeImage = new NoticeImage();
-        noticeImage.imageUrl = imageUrl;
-        noticeImage.connectNotice(notice);
-        return noticeImage;
+    public static Image createOfNotice(String imageUrl, Post post) {
+        Image image = new Image();
+        image.imageUrl = imageUrl;
+        image.connectNotice(post);
+        return image;
     }
 }
