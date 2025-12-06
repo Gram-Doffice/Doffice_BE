@@ -1,6 +1,6 @@
-package gram11.doffice.domain.notice.entity;
+package gram11.doffice.domain.post.domain;
 
-import gram11.doffice.domain.image.entity.NoticeImage;
+import gram11.doffice.domain.image.entity.Image;
 import gram11.doffice.domain.user.entity.User;
 import gram11.doffice.global.entity.TimeBaseEntity;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Notice extends TimeBaseEntity {
+public class Post extends TimeBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,8 @@ public class Notice extends TimeBaseEntity {
     @Column(length = 2000)
     private String content;
 
-    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<NoticeImage> noticeImages = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -38,8 +38,8 @@ public class Notice extends TimeBaseEntity {
     }
 
     // 이미지 추가
-    public void addImage(NoticeImage noticeImage) {
-        noticeImages.add(noticeImage);
-        noticeImage.connectNotice(this);
+    public void addImage(Image image) {
+        images.add(image);
+        image.connectNotice(this);
     }
 }

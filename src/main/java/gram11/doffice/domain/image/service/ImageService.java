@@ -1,8 +1,8 @@
 package gram11.doffice.domain.image.service;
 
-import gram11.doffice.domain.image.entity.NoticeImage;
-import gram11.doffice.domain.notice.entity.Notice;
-import gram11.doffice.domain.notice.repository.NoticeRepository;
+import gram11.doffice.domain.image.entity.Image;
+import gram11.doffice.domain.post.domain.Post;
+import gram11.doffice.domain.post.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,15 +15,15 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class NoticeImageService {
+public class ImageService {
 
-    private final NoticeRepository noticeRepository;
+    private final PostRepository postRepository;
     private final FileProperties fileProperties;
 
     public void saveImages (List<MultipartFile> files, Long noticeId) throws IOException {
 
         // DB에서 notice 조회
-        Notice notice = noticeRepository.findById(noticeId)
+        Post post = postRepository.findById(noticeId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 게시글입니다."));
 
         for (MultipartFile file : files){
@@ -47,17 +47,17 @@ public class NoticeImageService {
 
             // DB에 저장할 URL
             String imageUrl = "/images/notice/" + fileName;
-            NoticeImage noticeImage = NoticeImage.createOfNotice(imageUrl, notice);
+            Image image = Image.createOfNotice(imageUrl, post);
 
-            notice.addImage(noticeImage);
+            post.addImage(image);
         }
     }
 
-    public void deleteImages(List<NoticeImage> noticeImages) {
-        for (NoticeImage noticeImage : noticeImages) {
+    public void deleteImages(List<Image> images) {
+        for (Image image : images) {
 
             // DB에 저장된 URL -> 로컬 경로 계산
-            String fileName = Paths.get(noticeImage.getImageUrl()).getFileName().toString();
+            String fileName = Paths.get(image.getImageUrl()).getFileName().toString();
             File file = new File(Paths.get(fileProperties.getUploadDir(), fileName).toString());
 
             if (file.exists()) {

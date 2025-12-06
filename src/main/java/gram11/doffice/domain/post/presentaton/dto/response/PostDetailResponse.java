@@ -1,4 +1,4 @@
-package gram11.doffice.domain.notice.dto.responseDto;
+package gram11.doffice.domain.post.presentaton.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,12 @@ import java.util.List;
 
 @Builder
 @Getter
-public class ResponseNoticeDto {
+public class PostDetailResponse {
 
     private Long id;
     private String title;
     private String content;
-    private ResponseUserDto user;
+    private UserResponse user;
     private LocalDateTime createdAt;
 
     private List<ImageDto> images;

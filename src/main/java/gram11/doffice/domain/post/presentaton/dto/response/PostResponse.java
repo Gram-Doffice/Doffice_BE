@@ -1,4 +1,4 @@
-package gram11.doffice.domain.notice.dto.responseDto;
+package gram11.doffice.domain.post.presentaton.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 @Getter
 @AllArgsConstructor
-public class ResponseNoticeAllDto {
+public class PostResponse {
 
     private final List<NoticeDto> notice;
 
