@@ -8,7 +8,7 @@ import gram11.doffice.domain.notice.dto.responseDto.ResponseNoticeDto;
 import gram11.doffice.domain.notice.entity.Notice;
 import gram11.doffice.domain.notice.repository.NoticeRepository;
 import gram11.doffice.domain.notice.dto.responseDto.ResponseUserDto;
-import gram11.doffice.global.exception.NotFoundException;
+import gram11.doffice.global.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +42,7 @@ public class NoticeService {
     @Transactional
     public void deleteNotice(Long id) {
         Notice notice = noticeRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         // 이미지 삭제 로직
         if (notice.getNoticeImages() != null && !notice.getNoticeImages().isEmpty()) {
@@ -57,7 +57,7 @@ public class NoticeService {
     @Transactional(readOnly = true)
     public ResponseNoticeDto getNotice(Long id) {
         Notice notice = noticeRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         ResponseUserDto userDto = new ResponseUserDto(
                 notice.getUser().getId(),
@@ -105,7 +105,7 @@ public class NoticeService {
 
         // notice id 가져오기
         Notice notice = noticeRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(PostNotFoundException::new);
 
         // 기존 이미지 삭제
         if (notice.getNoticeImages() != null && !notice.getNoticeImages().isEmpty()) {
