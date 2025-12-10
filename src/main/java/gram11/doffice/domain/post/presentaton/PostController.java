@@ -1,7 +1,7 @@
 package gram11.doffice.domain.post.presentaton;
 
-import gram11.doffice.domain.post.presentaton.dto.request.CreatePostRequest;
-import gram11.doffice.domain.post.presentaton.dto.request.UpdatePostRequest;
+import gram11.doffice.domain.post.presentaton.dto.request.CreateNoticeRequest;
+import gram11.doffice.domain.post.presentaton.dto.request.UpdateNoticeRequest;
 import gram11.doffice.domain.post.presentaton.dto.response.PostResponse;
 import gram11.doffice.domain.post.presentaton.dto.response.PostDetailResponse;
 import gram11.doffice.domain.post.service.PostService;
@@ -24,7 +24,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void createNotice(
-            @Valid @ModelAttribute("request") CreatePostRequest noticeDto)
+            @Valid @ModelAttribute("request") CreateNoticeRequest noticeDto)
             throws IOException {
         postService.createNotice(noticeDto);
     }
@@ -53,7 +53,7 @@ public class PostController {
     @PutMapping("/{notice_id}")
     public void updateNotice(
             @PathVariable("notice_id") Long parameter,
-            @Valid @ModelAttribute("request") UpdatePostRequest noticeDto)
+            @Valid @ModelAttribute("request") UpdateNoticeRequest noticeDto)
             throws IOException {
 
         postService.updateNotice(parameter, noticeDto);

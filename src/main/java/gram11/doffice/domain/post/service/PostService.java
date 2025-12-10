@@ -1,8 +1,8 @@
 package gram11.doffice.domain.post.service;
 
 import gram11.doffice.domain.image.service.ImageService;
-import gram11.doffice.domain.post.presentaton.dto.request.CreatePostRequest;
-import gram11.doffice.domain.post.presentaton.dto.request.UpdatePostRequest;
+import gram11.doffice.domain.post.presentaton.dto.request.CreateNoticeRequest;
+import gram11.doffice.domain.post.presentaton.dto.request.UpdateNoticeRequest;
 import gram11.doffice.domain.post.presentaton.dto.response.PostResponse;
 import gram11.doffice.domain.post.presentaton.dto.response.PostDetailResponse;
 import gram11.doffice.domain.post.domain.Post;
@@ -26,7 +26,21 @@ public class PostService {
 
     // 공지사항 작성
     @Transactional
-    public void createNotice(CreatePostRequest request) throws IOException {
+    public void createNotice(CreateNoticeRequest request) throws IOException {
+        Post post = new Post();
+        post.updateNotice(request.getTitle(), request.getContent());
+
+        postRepository.save(post);
+
+        // 이미지 저장
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            imageService.saveImages(request.getImages(), post.getId());
+        }
+    }
+
+    // 공지사항 작성
+    @Transactional
+    public void createLost(CreateNoticeRequest request) throws IOException {
         Post post = new Post();
         post.updateNotice(request.getTitle(), request.getContent());
 
@@ -101,7 +115,7 @@ public class PostService {
 
     // 공지사항 수정
     @Transactional
-    public void updateNotice(Long id, UpdatePostRequest request) throws IOException {
+    public void updateNotice(Long id, UpdateNoticeRequest request) throws IOException {
 
         // notice id 가져오기
         Post post = postRepository.findById(id)
@@ -117,6 +131,18 @@ public class PostService {
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             imageService.saveImages(request.getImages(), post.getId());
         }
+
+        // 게시글 수정사항 저장
+        post.updateNotice(request.getTitle(), request.getContent());
+        postRepository.save(post);
+    }
+
+    @Transactional
+    public void updateLost(Long id, UpdateNoticeRequest request) throws IOException {
+
+        // post id 가져오기
+        Post post = postRepository.findById(id)
+                .orElseThrow(PostNotFoundException::new);
 
         // 게시글 수정사항 저장
         post.updateNotice(request.getTitle(), request.getContent());
