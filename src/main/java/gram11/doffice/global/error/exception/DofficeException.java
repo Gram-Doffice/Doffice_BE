@@ -8,4 +8,9 @@ import lombok.RequiredArgsConstructor;
 public class DofficeException extends RuntimeException {
 
     private final ErrorCode errorCode;
+
+    public DofficeException(ErrorCode errorCode, Throwable cause) {
+        super(cause);
+        this.errorCode = errorCode;
+    }
 }

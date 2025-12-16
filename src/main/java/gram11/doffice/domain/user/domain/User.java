@@ -1,6 +1,6 @@
-package gram11.doffice.domain.user.entity;
+package gram11.doffice.domain.user.domain;
 
-import gram11.doffice.domain.user.entity.type.Role;
+import gram11.doffice.domain.user.domain.type.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

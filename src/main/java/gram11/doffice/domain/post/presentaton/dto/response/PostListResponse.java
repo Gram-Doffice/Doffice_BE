@@ -2,11 +2,9 @@ package gram11.doffice.domain.post.presentaton.dto.response;
 
 import java.time.LocalDateTime;
 
-public record PostDetailResponse (
+public record PostListResponse (
 
         String title,
-        String content,
-        String author,
         LocalDateTime createAt,
         String type
-) {}
+) { }

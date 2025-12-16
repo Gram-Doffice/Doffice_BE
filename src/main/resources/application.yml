@@ -29,3 +29,21 @@ manager:
     username: ${MANAGER_USERNAME}
     password: ${MANAGER_PASSWORD}
     enabled: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${ACCESS_KEY}
+      secretKey: ${SECRET_KEY}
+    s3:
+      bucket: ${BUCKET_NAME}
+      exp-time: 604800000
+    region:
+      static: ${AWS_STATIC}
+    stack:
+      auto: false

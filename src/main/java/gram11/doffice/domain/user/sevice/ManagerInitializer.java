@@ -1,12 +1,12 @@
 package gram11.doffice.domain.user.sevice;
 
-import gram11.doffice.domain.user.entity.type.Role;
-import gram11.doffice.domain.user.repository.UserRepository;
-import gram11.doffice.domain.user.entity.User;
+import gram11.doffice.domain.user.domain.type.Role;
+import gram11.doffice.domain.user.domain.repository.UserRepository;
+import gram11.doffice.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class ManagerInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
+    private final PasswordEncoder encoder;
 
     @Value("${manager.initial.username}")
     private String initialUsername;
