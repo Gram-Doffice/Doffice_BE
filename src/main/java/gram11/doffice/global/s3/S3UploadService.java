@@ -18,8 +18,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class S3UploadService {
 
     private final AmazonS3Client amazonS3Client;

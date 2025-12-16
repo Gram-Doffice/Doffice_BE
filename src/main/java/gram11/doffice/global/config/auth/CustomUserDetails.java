@@ -1,6 +1,6 @@
 package gram11.doffice.global.config.auth;
 
-import gram11.doffice.domain.user.entity.User;
+import gram11.doffice.domain.user.domain.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,18 +17,33 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
     private String role;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    public CustomUserDetails(
+            Long id,
+            String username,
+            Collection<? extends GrantedAuthority> authorities) {
+
+        this.id = id;
+        this.username = username;
+        this.authorities = authorities;
+
+        this.password = null;
+        this.role = null;
+    }
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.role = user.getRole().name();
+        List<GrantedAuthority> authList = new ArrayList<>();
+        authList.add(new SimpleGrantedAuthority("ROLE_" + role));
+        this.authorities = authList;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         return authorities;
     }
 

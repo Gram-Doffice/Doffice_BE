@@ -1,6 +1,6 @@
-package gram11.doffice.domain.user.repository;
+package gram11.doffice.domain.user.domain.repository;
 
-import gram11.doffice.domain.user.entity.User;
+import gram11.doffice.domain.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

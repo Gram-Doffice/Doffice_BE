@@ -1,7 +1,7 @@
 package gram11.doffice.global.config.auth;
 
-import gram11.doffice.domain.user.entity.User;
-import gram11.doffice.domain.user.repository.UserRepository;
+import gram11.doffice.domain.user.domain.User;
+import gram11.doffice.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

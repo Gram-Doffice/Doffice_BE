@@ -1,19 +1,21 @@
 package gram11.doffice.domain.post.domain;
 
-import gram11.doffice.domain.image.entity.Image;
-import gram11.doffice.domain.user.entity.User;
-import gram11.doffice.global.entity.TimeBaseEntity;
+import gram11.doffice.domain.post.domain.type.PostType;
+import gram11.doffice.domain.user.domain.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
-@Getter
-@NoArgsConstructor
 @Entity
-public class Post extends TimeBaseEntity {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,21 +27,28 @@ public class Post extends TimeBaseEntity {
     @Column(length = 2000)
     private String content;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    @Column(nullable = false, length = 6)
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column
+    private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public void updateNotice(String title, String content) {
+    public Post(String title, String content, PostType postType) {
         this.title = title;
         this.content = content;
+        this.postType = postType;
     }
 
-    // 이미지 추가
-    public void addImage(Image image) {
-        images.add(image);
-        image.connectNotice(this);
+    public void updatePost(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }

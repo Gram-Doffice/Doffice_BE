@@ -1,11 +1,13 @@
 package gram11.doffice.domain.post.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import gram11.doffice.global.error.exception.DofficeException;
+import gram11.doffice.global.error.exception.ErrorCode;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class PostNotFoundException extends RuntimeException {
-    public PostNotFoundException() {
-        super("존재하지 않는 게시글입니다.");
+public class PostNotFoundException extends DofficeException {
+
+    public static final DofficeException EXCEPTION = new PostNotFoundException();
+
+    private PostNotFoundException() {
+        super(ErrorCode.POST_NOT_FOUND);
     }
 }
