@@ -1,6 +1,6 @@
 package gram11.doffice.domain.post.service;
 
-import gram11.doffice.domain.post.domain.type.PostType;
+import gram11.doffice.domain.post.exception.NoAuthorException;
 import gram11.doffice.domain.post.presentaton.dto.response.PostDetailResponse;
 import gram11.doffice.domain.post.domain.Post;
 import gram11.doffice.domain.post.domain.repository.PostRepository;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +24,14 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
-        return new PostDetailResponse(
-                post.getTitle(),
-                post.getContent(),
-                post.getUser().getUsername(),
-                post.getCreatedAt(),
-                PostType.NOTICE.toString()
-        );
+        return PostDetailResponse.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .author(post.getUser().getUsername())
+                .createAt(post.getCreatedAt())
+                .type(post.getPostType().toString())
+                .imageUrl(post.getImageUrl())
+                .build();
     }
 
     // 게시글 전체 조회
@@ -49,9 +49,13 @@ public class PostService {
 
     // 게시글 삭제
     @Transactional
-    public void deletePost(Long id) {
-        if (!postRepository.existsById(id)) {
-            throw PostNotFoundException.EXCEPTION;
+    public void deletePost(Long id, Long userId) {
+
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+
+        if (!post.getUser().getId().equals(userId)) {
+            throw NoAuthorException.EXCEPTION; // 권한 없음 예외
         }
 
         postRepository.deleteById(id);

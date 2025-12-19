@@ -1,12 +1,17 @@
 package gram11.doffice.domain.post.presentaton.dto.response;
 
-import java.time.LocalDateTime;
+import lombok.Builder;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Builder
 public record PostDetailResponse (
 
         String title,
         String content,
         String author,
         LocalDateTime createAt,
-        String type
+        String type,
+        List<String> imageUrl
 ) {}

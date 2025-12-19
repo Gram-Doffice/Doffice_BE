@@ -20,10 +20,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static gram11.doffice.global.config.SecurityConfig.PERMITTED_AUTH;
 
 @Component
 @RequiredArgsConstructor
@@ -33,31 +36,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
-    // TODO: 안에 들어갈 end point 명시하기, 귀찮아서 미룸
-    private static final String[] PERMITTED_AUTH = {
-            "/auth/**"
-    };
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        // OPTIONS 요청은 CORS preflight 이므로 필터링 제외, 라는데 공부가 더 필요할 거 같다.
         if ("OPTIONS".equals(method)) {
             return true;
         }
 
         return Arrays.stream(PERMITTED_AUTH)
                 .anyMatch(permit -> matcher.match(permit, path));
+
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, // HTTP request를 담고 있는 클래스
                                     @NonNull HttpServletResponse response, // HTTP response를 담는 클래스
                                     @NonNull FilterChain chain // Spring의 Filter들을 체인처럼 연결해 놓은 클래스
-                                    ) throws ServletException, IOException {
-        String jwt = getJwt(request);
+    ) throws ServletException, IOException {
+        String jwt = jwtTokenProvider.getJwt(request);
 
         if (jwt == null) {
             chain.doFilter(request, response);
@@ -76,6 +74,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             // ACCESS 토큰이고 필수 클레임이 존재할 경우
             if ("ACCESS".equals(tokenType) && username != null && userId != null) {
 
+                if (jwtTokenProvider.isBlackList(jwt)) {
+                    throw InvalidJwtException.EXCEPTION;
+                }
+
                 // 권한 파싱
                 List<GrantedAuthority> authorities = Arrays.stream(authoritiesStr.split(","))
                         .map(SimpleGrantedAuthority::new)
@@ -90,22 +92,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             throw ExpiredJwtException.EXCEPTION;
         } catch (InvalidJwtException e) {
             throw InvalidJwtException.EXCEPTION;
         }
-    }
-
-    // Jwt 추출 메서드
-    private String getJwt(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-
-        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-            throw InvalidJwtException.EXCEPTION;
-        }
-
-        return bearerToken.substring(7);
     }
 }

@@ -3,6 +3,7 @@ package gram11.doffice.domain.post.service;
 import gram11.doffice.domain.post.domain.Post;
 import gram11.doffice.domain.post.domain.repository.PostRepository;
 import gram11.doffice.domain.post.domain.type.PostType;
+import gram11.doffice.domain.post.exception.NoAuthorException;
 import gram11.doffice.domain.post.exception.PostNotFoundException;
 import gram11.doffice.domain.post.presentaton.dto.request.CreateNoticeRequest;
 import gram11.doffice.domain.post.presentaton.dto.request.UpdateNoticeRequest;
@@ -34,17 +35,21 @@ public class NoticeService {
     // 공지사항 작성
     @Transactional
     public void createNotice(CreateNoticeRequest request) {
-        Post post = new Post(request.title(), request.content(), PostType.NOTICE);
+        Post post = new Post(request.title(), request.content(), PostType.NOTICE, null);
         postRepository.save(post);
     }
 
     // 공지사항 수정
     @Transactional
-    public void updateNotice(Long id, UpdateNoticeRequest request) {
+    public void updateNotice(Long id, UpdateNoticeRequest request, Long userId) {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
-        post.updatePost(request.title(), request.content());
+        if (!post.getUser().getId().equals(userId)) {
+            throw NoAuthorException.EXCEPTION; // 권한 없음 예외
+        }
+
+        post.updatePost(request.title(), request.content(), null);
     }
 }
