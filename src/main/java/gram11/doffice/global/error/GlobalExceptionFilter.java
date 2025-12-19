@@ -1,9 +1,8 @@
 package gram11.doffice.global.error;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gram11.doffice.global.error.exception.DofficeException;
-import gram11.doffice.global.error.exception.ErrorResponse;
 import gram11.doffice.global.error.exception.ErrorCode;
+import gram11.doffice.global.error.exception.ResponseWithErrorCode;
 import gram11.doffice.global.jwt.exception.ExpiredJwtException;
 import gram11.doffice.global.jwt.exception.InvalidJwtException;
 import io.sentry.Sentry;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,7 +22,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class GlobalExceptionFilter extends OncePerRequestFilter {
 
-    private final ObjectMapper mapper;
+    private final ResponseWithErrorCode responseWithErrorCode;
 
     @Override
     protected void doFilterInternal(
@@ -35,31 +33,17 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             log.error("ExpiredJwtException catch : {}", e.getMessage());
-            responseWithErrorCode(response, ErrorCode.EXPIRED_TOKEN);
-            Sentry.captureException(e);
+            responseWithErrorCode.response(response, ErrorCode.EXPIRED_TOKEN);
         } catch (InvalidJwtException e) {
             log.error("InvalidJwtException catch : {}", e.getMessage());
-            responseWithErrorCode(response, ErrorCode.INVALID_TOKEN);
-            Sentry.captureException(e);
+            responseWithErrorCode.response(response, ErrorCode.INVALID_TOKEN);
         } catch (DofficeException e) {
             log.error("Handled DofficeException : ", e);
-            responseWithErrorCode(response, e.getErrorCode());
-            Sentry.captureException(e);
+            responseWithErrorCode.response(response, e.getErrorCode());
         } catch (Exception e) {
             log.error("Unhandled Exception : ", e);
-            responseWithErrorCode(response, ErrorCode.INTERNAL_SERVER_ERROR);
+            responseWithErrorCode.response(response, ErrorCode.INTERNAL_SERVER_ERROR);
             Sentry.captureException(e);
         }
-    }
-
-    private void responseWithErrorCode(HttpServletResponse response, ErrorCode errorCode) throws IOException {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(errorCode.getStatus())
-                .message(errorCode.getMessage())
-                .build();
-
-        response.setStatus(errorCode.getStatus().value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        mapper.writeValue(response.getOutputStream(), errorResponse);
     }
 }
