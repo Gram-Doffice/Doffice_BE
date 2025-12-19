@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,7 +25,7 @@ public class Post {
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(length = 2000)
+    @Column(nullable = false, length = 2000)
     private String content;
 
     @Column(nullable = false, length = 6)
@@ -34,21 +35,23 @@ public class Post {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column
-    private String imageUrl;
+    @Column(length = 1024)
+    private List<String> imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Post(String title, String content, PostType postType) {
+    public Post(String title, String content, PostType postType, List<String> imageUrl) {
         this.title = title;
         this.content = content;
         this.postType = postType;
+        this.imageUrl = imageUrl;
     }
 
-    public void updatePost(String title, String content) {
+    public void updatePost(String title, String content, List<String> imageUrl) {
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
     }
 }

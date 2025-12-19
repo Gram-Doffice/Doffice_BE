@@ -16,7 +16,6 @@ public class CustomUserDetails implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private String role;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(
@@ -27,19 +26,14 @@ public class CustomUserDetails implements UserDetails {
         this.id = id;
         this.username = username;
         this.authorities = authorities;
-
         this.password = null;
-        this.role = null;
     }
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.role = user.getRole().name();
-        List<GrantedAuthority> authList = new ArrayList<>();
-        authList.add(new SimpleGrantedAuthority("ROLE_" + role));
-        this.authorities = authList;
+        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
     @Override

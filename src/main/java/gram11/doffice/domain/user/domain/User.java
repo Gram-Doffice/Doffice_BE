@@ -21,8 +21,8 @@ public class User {
     @Column(nullable = false, length = 100)
     private String password;
 
+    @Column(nullable = false, length = 7)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role;
 
     public void updateUser(String username, String password, Role role) {

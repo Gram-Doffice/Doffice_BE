@@ -2,17 +2,20 @@ package gram11.doffice.domain.post.presentaton.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public record UpdateLostRequest(
 
-        @NotBlank(message = "제목을 작성해주세요.")
-        @Size(max = 100, message = "최대 100자까지 작성할 수 있습니다.")
+        @NotBlank(message = "${validation.title.blank}")
+        @Size(max = 200, message = "${validation.title.length}")
         String title,
 
-        @Size(max = 2000, message = "최대 2000자까지 작성할 수 있습니다.")
-        String content
+        @NotBlank(message = "${validation.content.blank}")
+        @Size(max = 2000, message = "${validation.content.length}")
+        String content,
+
+        // valid 뭐해야하지ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ extension 체크용 어노테이션 정의?
+        List<String> keepImagesUrl
 ) {
 }

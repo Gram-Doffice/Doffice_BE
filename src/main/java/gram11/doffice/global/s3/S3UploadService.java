@@ -1,28 +1,36 @@
 package gram11.doffice.global.s3;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import gram11.doffice.global.s3.exception.BadFileExtensionException;
 import gram11.doffice.global.s3.exception.EmptyFileException;
 import gram11.doffice.global.s3.exception.FailUploadImageException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3UploadService {
 
-    private final AmazonS3Client amazonS3Client;
+    private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -50,38 +58,53 @@ public class S3UploadService {
         String fileKey = path + randomName + "." + ext;
 
         try {
-            InputStream inputStream = file.getInputStream();
+            software.amazon.awssdk.services.s3.model.PutObjectRequest putObjectRequest = software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .contentType(file.getContentType())
+                    .build();
 
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-
-            PutObjectRequest putObjectRequest = new PutObjectRequest(
-                    bucket,
-                    fileKey,
-                    inputStream,
-                    metadata
-            ).withCannedAcl(CannedAccessControlList.PublicRead);
-
-            amazonS3Client.putObject(putObjectRequest);
-            return amazonS3Client.getUrl(bucket, fileKey).toString();
-
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            return fileKey;
         } catch (Exception e) {
             throw new FailUploadImageException(e);
         }
     }
 
-    public void delete(String fileName, String path) {
+    public String generatePresignedUrl(String fileKey) {
+        // 1. URL 만료 시간을 1시간으로 설정
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofHours(1))
+                .getObjectRequest(GetObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(fileKey)
+                        .build())
+                .build();
+
+        // 2. Presigner를 통해 사전 서명된 URL 생성
+        PresignedGetObjectRequest presignedObject = s3Presigner.presignGetObject(presignRequest);
+
+        // 3. 서명된 URL 반환
+        return presignedObject.url().toString();
+    }
+
+    public void delete(String fileUrl) {
         try {
-            amazonS3Client.deleteObject(bucket, path + fileName);
-        } catch (AmazonServiceException e) {
-            if ("NoSuchKey".equals(e.getErrorCode())) {
+            String fileKey = fileUrl.substring(fileUrl.lastIndexOf(".com") + 1);
+
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (S3Exception e) {
+            if ("NoSuchKey".equals(e.awsErrorDetails().errorCode())) {
                 return;
             }
-            throw new FailUploadImageException(e);
-
+            log.error("S3 파일 삭제 실패: {}", e.getMessage());
         } catch (Exception e) {
-            throw new FailUploadImageException(e);
+            log.error("S3 파일 삭제 실패: {}", e.getMessage());
         }
     }
 }

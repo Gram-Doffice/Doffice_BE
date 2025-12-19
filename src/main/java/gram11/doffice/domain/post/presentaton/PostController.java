@@ -9,12 +9,17 @@ import gram11.doffice.domain.post.presentaton.dto.response.PostListResponse;
 import gram11.doffice.domain.post.service.LostService;
 import gram11.doffice.domain.post.service.NoticeService;
 import gram11.doffice.domain.post.service.PostService;
+import gram11.doffice.global.config.auth.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,13 +56,17 @@ public class PostController {
     }
 
     // 게시글 삭제
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{post_id}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable("post_id") Long id) {
-        postService.deletePost(id);
+    public ResponseEntity<Void> deleteNotice(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("post_id") Long id) {
+        postService.deletePost(id, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
 
     // 공지글 작성
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/write-notice")
     public ResponseEntity<Void> createNotice(
             @Valid @ModelAttribute("request") CreateNoticeRequest request) {
@@ -66,28 +75,35 @@ public class PostController {
     }
 
     // 공지글 수정
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/modify-notice/{post_id}")
     public ResponseEntity<Void> updateNotice(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("post_id") Long id,
             @Valid @ModelAttribute("request") UpdateNoticeRequest request) {
-        noticeService.updateNotice(id, request);
+        noticeService.updateNotice(id, request, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
 
     // 분실물 작성
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/write-lost")
     public ResponseEntity<Void> createLost(
-            @Valid @ModelAttribute("request") CreateLostRequest request) {
-        lostService.createLost(request);
+            @Valid @RequestPart("request") CreateLostRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        lostService.createLost(request, images);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 분실물 수정
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/modify-lost/{post_id}")
     public ResponseEntity<Void> updateLost(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("post_id") Long id,
-            @Valid @ModelAttribute("request") UpdateLostRequest request) {
-        lostService.updateLost(id, request);
+            @Valid @RequestPart("request") UpdateLostRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        lostService.updateLost(id, request, images, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
 }
