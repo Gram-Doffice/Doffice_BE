@@ -30,7 +30,7 @@ spring:
       - io.awspring.cloud.autoconfigure.s3.S3AutoConfiguration
 
 server:
-  port: ${PORT:8080}
+  port: ${SERVER_PORT:8080}
 
 sentry:
   dsn: ${SENTRY_DSN}
