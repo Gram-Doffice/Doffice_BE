@@ -25,6 +25,7 @@ public class PostService {
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
         return PostDetailResponse.builder()
+                .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .author(post.getUser().getUsername())
@@ -40,10 +41,12 @@ public class PostService {
         List<Post> posts = postRepository.findAll();
 
         return posts.stream()
-                .map(post -> new PostListResponse(
-                        post.getTitle(),
-                        post.getCreatedAt(),
-                        post.getPostType().toString()))
+                .map(post -> PostListResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .createAt(post.getCreatedAt())
+                        .type(post.getPostType().toString())
+                        .build())
                 .toList();
     }
 

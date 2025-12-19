@@ -8,6 +8,9 @@ import gram11.doffice.domain.post.exception.PostNotFoundException;
 import gram11.doffice.domain.post.presentaton.dto.request.CreateNoticeRequest;
 import gram11.doffice.domain.post.presentaton.dto.request.UpdateNoticeRequest;
 import gram11.doffice.domain.post.presentaton.dto.response.PostListResponse;
+import gram11.doffice.domain.user.domain.User;
+import gram11.doffice.domain.user.domain.repository.UserRepository;
+import gram11.doffice.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,23 +22,34 @@ import java.util.List;
 public class NoticeService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public List<PostListResponse> filterNotice() {
         List<Post> posts = postRepository.findByPostType(PostType.NOTICE);
 
         return posts.stream()
-                .map(post -> new PostListResponse(
-                        post.getTitle(),
-                        post.getCreatedAt(),
-                        post.getPostType().toString()))
+                .map(post -> PostListResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .createAt(post.getCreatedAt())
+                        .type(post.getPostType().toString())
+                        .build())
                 .toList();
     }
 
     // 공지사항 작성
     @Transactional
-    public void createNotice(CreateNoticeRequest request) {
-        Post post = new Post(request.title(), request.content(), PostType.NOTICE, null);
+    public void createNotice(CreateNoticeRequest request, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
+        Post post = Post.builder()
+                .title(request.title())
+                .content(request.content())
+                .postType(PostType.NOTICE)
+                .imageUrl(null)
+                .user(user)
+                .build();
         postRepository.save(post);
     }
 
