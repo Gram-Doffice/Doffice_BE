@@ -29,8 +29,15 @@ spring:
     exclude:
       - io.awspring.cloud.autoconfigure.s3.S3AutoConfiguration
 
+  messages:
+    encoding: UTF-8
+
 server:
   port: ${SERVER_PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 
 sentry:
   dsn: ${SENTRY_DSN}

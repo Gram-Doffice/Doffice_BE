@@ -7,12 +7,12 @@ import java.util.List;
 
 public record UpdateLostRequest(
 
-        @NotBlank(message = "${validation.title.blank}")
-        @Size(max = 200, message = "${validation.title.length}")
+        @NotBlank(message = "{validation.title.blank}")
+        @Size(max = 200, message = "{validation.title.length}")
         String title,
 
-        @NotBlank(message = "${validation.content.blank}")
-        @Size(max = 2000, message = "${validation.content.length}")
+        @NotBlank(message = "{validation.content.blank}")
+        @Size(max = 2000, message = "{validation.content.length}")
         String content,
 
         // valid 뭐해야하지ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ extension 체크용 어노테이션 정의?

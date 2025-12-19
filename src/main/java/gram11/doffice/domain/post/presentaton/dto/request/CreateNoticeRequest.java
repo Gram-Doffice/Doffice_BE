@@ -5,11 +5,11 @@ import jakarta.validation.constraints.Size;
 
 public record CreateNoticeRequest(
 
-        @NotBlank(message = "${validation.title.blank}")
-        @Size(max = 200, message = "${validation.title.length}")
+        @NotBlank(message = "{validation.title.blank}")
+        @Size(max = 200, message = "{validation.title.length}")
         String title,
 
-        @NotBlank(message = "${validation.content.blank}")
-        @Size(max = 2000, message = "${validation.content.length}")
+        @NotBlank(message = "{validation.content.blank}")
+        @Size(max = 2000, message = "{validation.content.length}")
         String content
 ) {}
