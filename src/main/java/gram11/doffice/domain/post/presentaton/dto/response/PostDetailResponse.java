@@ -8,6 +8,7 @@ import java.util.List;
 @Builder
 public record PostDetailResponse (
 
+        Long id,
         String title,
         String content,
         String author,

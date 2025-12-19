@@ -31,12 +31,6 @@ public class PostController {
     private final NoticeService noticeService;
     private final LostService lostService;
 
-    // 게시글 상세 조회
-    @GetMapping("/{post_id}")
-    public ResponseEntity<PostDetailResponse> getNotice(@PathVariable("post_id") Long id) {
-        return ResponseEntity.ok(postService.getPost(id));
-    }
-
     // 전체 게시글 조회
     @GetMapping
     public ResponseEntity<List<PostListResponse>> getAllNotice() {
@@ -55,22 +49,24 @@ public class PostController {
         return ResponseEntity.ok(lostService.filterLost());
     }
 
-    // 게시글 삭제
-    @PreAuthorize("hasRole('MANAGER')")
-    @DeleteMapping("/{post_id}")
-    public ResponseEntity<Void> deleteNotice(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable("post_id") Long id) {
-        postService.deletePost(id, userDetails.getId());
-        return ResponseEntity.noContent().build();
-    }
-
     // 공지글 작성
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/write-notice")
     public ResponseEntity<Void> createNotice(
-            @Valid @ModelAttribute("request") CreateNoticeRequest request) {
-        noticeService.createNotice(request);
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody CreateNoticeRequest request) {
+        noticeService.createNotice(request, userDetails.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // 분실물 작성
+    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("/write-lost")
+    public ResponseEntity<Void> createLost(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestPart("request") CreateLostRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        lostService.createLost(request, images, userDetails.getId());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -80,19 +76,9 @@ public class PostController {
     public ResponseEntity<Void> updateNotice(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("post_id") Long id,
-            @Valid @ModelAttribute("request") UpdateNoticeRequest request) {
+            @Valid @RequestPart("request") UpdateNoticeRequest request) {
         noticeService.updateNotice(id, request, userDetails.getId());
         return ResponseEntity.noContent().build();
-    }
-
-    // 분실물 작성
-    @PreAuthorize("hasRole('MANAGER')")
-    @PostMapping("/write-lost")
-    public ResponseEntity<Void> createLost(
-            @Valid @RequestPart("request") CreateLostRequest request,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
-        lostService.createLost(request, images);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // 분실물 수정
@@ -104,6 +90,22 @@ public class PostController {
             @Valid @RequestPart("request") UpdateLostRequest request,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         lostService.updateLost(id, request, images, userDetails.getId());
+        return ResponseEntity.noContent().build();
+    }
+
+    // 게시글 상세 조회
+    @GetMapping("/{post_id}")
+    public ResponseEntity<PostDetailResponse> getNotice(@PathVariable("post_id") Long id) {
+        return ResponseEntity.ok(postService.getPost(id));
+    }
+
+    // 게시글 삭제
+    @PreAuthorize("hasRole('MANAGER')")
+    @DeleteMapping("/{post_id}")
+    public ResponseEntity<Void> deleteNotice(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("post_id") Long id) {
+        postService.deletePost(id, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
 }

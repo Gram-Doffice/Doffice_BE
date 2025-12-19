@@ -9,6 +9,8 @@ import gram11.doffice.domain.post.exception.PostNotFoundException;
 import gram11.doffice.domain.post.presentaton.dto.request.CreateLostRequest;
 import gram11.doffice.domain.post.presentaton.dto.request.UpdateLostRequest;
 import gram11.doffice.domain.post.presentaton.dto.response.PostListResponse;
+import gram11.doffice.domain.user.domain.User;
+import gram11.doffice.domain.user.domain.repository.UserRepository;
 import gram11.doffice.global.s3.S3BucketFolder;
 import gram11.doffice.global.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class LostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final S3UploadService s3UploadService;
 
     // 분실물 목록 조회
@@ -34,22 +37,33 @@ public class LostService {
         List<Post> posts = postRepository.findByPostType(PostType.LOST);
 
         return posts.stream()
-                .map(post -> new PostListResponse(
-                        post.getTitle(),
-                        post.getCreatedAt(),
-                        post.getPostType().toString()))
+                .map(post -> PostListResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .createAt(post.getCreatedAt())
+                        .type(post.getPostType().toString())
+                        .build())
                 .toList();
     }
 
     // 분실물 게시글 작성
     @Transactional
-    public void createLost(CreateLostRequest request, List<MultipartFile> images) {
+    public void createLost(CreateLostRequest request, List<MultipartFile> images, Long userId) {
         validateImageCount(images.size());
 
         // 이미지 업로드
         List<String> imagesUrl = uploadImage(images);
 
-        Post post = new Post(request.title(), request.content(), PostType.LOST, imagesUrl);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+
+        Post post = Post.builder()
+                .title(request.title())
+                .content(request.content())
+                .user(user)
+                .imageUrl(imagesUrl)
+                .postType(PostType.LOST)
+                .build();
         postRepository.save(post);
     }
 

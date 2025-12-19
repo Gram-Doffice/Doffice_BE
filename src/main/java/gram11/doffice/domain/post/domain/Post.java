@@ -4,6 +4,7 @@ import gram11.doffice.domain.post.domain.type.PostType;
 import gram11.doffice.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -42,11 +43,14 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Post(String title, String content, PostType postType, List<String> imageUrl) {
+    @Builder
+    public Post(String title, String content, PostType postType, List<String> imageUrl, User user) {
         this.title = title;
         this.content = content;
         this.postType = postType;
+        this.createdAt = LocalDateTime.now();
         this.imageUrl = imageUrl;
+        this.user = user;
     }
 
     public void updatePost(String title, String content, List<String> imageUrl) {
