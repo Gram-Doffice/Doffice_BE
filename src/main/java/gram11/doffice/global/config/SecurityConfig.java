@@ -35,11 +35,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     public static final String[] PERMITTED_AUTH = {
-            "/auth/sign-up/**",
             "/auth/sign-in/**",
-            "/auth/check-id/**",
-            "/auth/refresh/**",
-            "/auth/verify-email/**",
 
             "/swagger-ui.html",
             "/v3/api-docs/**",
@@ -62,19 +58,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PERMITTED_AUTH).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/post/**").permitAll()
+                        .anyRequest().authenticated())
 
-                        .requestMatchers(
-                                "/auth/sign-out",
-                                "/auth/quit"
-                        ).authenticated()
-
-                        .requestMatchers(HttpMethod.GET, "/forum/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/information/**").permitAll()
-                        .requestMatchers("/forum/**").hasRole("USER")
-                        .requestMatchers("/information/**").hasRole("ADMIN")
-                        .anyRequest().hasRole("USER"))
-
-                .addFilterBefore(globalExceptionFilter, CorsFilter.class)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
