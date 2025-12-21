@@ -47,7 +47,7 @@ public class NoticeService {
                 .title(request.title())
                 .content(request.content())
                 .postType(PostType.NOTICE)
-                .imageUrl(null)
+                .imageKey(null)
                 .user(user)
                 .build();
         postRepository.save(post);

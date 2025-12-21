@@ -37,25 +37,25 @@ public class Post {
     private LocalDateTime createdAt;
 
     @Column(length = 1024)
-    private List<String> imageUrl;
+    private List<String> imageKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder
-    public Post(String title, String content, PostType postType, List<String> imageUrl, User user) {
+    public Post(String title, String content, PostType postType, List<String> imageKey, User user) {
         this.title = title;
         this.content = content;
         this.postType = postType;
         this.createdAt = LocalDateTime.now();
-        this.imageUrl = imageUrl;
+        this.imageKey = imageKey;
         this.user = user;
     }
 
     public void updatePost(String title, String content, List<String> imageUrl) {
         this.title = title;
         this.content = content;
-        this.imageUrl = imageUrl;
+        this.imageKey = imageUrl;
     }
 }

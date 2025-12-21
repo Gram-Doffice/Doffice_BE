@@ -9,8 +9,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://gram-doffice.ncloud.sbs")
-                .allowedMethods("GET", "POST", "PUT","PATCH", "DELETE", "OPTION")
+                .allowedOrigins(
+                        "https://gram-doffice.ncloud.sbs",
+                        "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }

@@ -6,10 +6,12 @@ import gram11.doffice.domain.post.domain.Post;
 import gram11.doffice.domain.post.domain.repository.PostRepository;
 import gram11.doffice.domain.post.exception.PostNotFoundException;
 import gram11.doffice.domain.post.presentaton.dto.response.PostListResponse;
+import gram11.doffice.global.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,12 +19,18 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final S3UploadService s3UploadService;
 
     // 게시글 상세 조회
     @Transactional(readOnly = true)
     public PostDetailResponse getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+
+        List<String> originalImageUrl = post.getImageKey() != null ? post.getImageKey() : Collections.emptyList();
+        List<String> s3ImageUrl = originalImageUrl.stream()
+                .map(s3UploadService::generatePresignedUrl)
+                .toList();
 
         return PostDetailResponse.builder()
                 .id(post.getId())
@@ -31,7 +39,7 @@ public class PostService {
                 .author(post.getUser().getUsername())
                 .createAt(post.getCreatedAt())
                 .type(post.getPostType().toString())
-                .imageUrl(post.getImageUrl())
+                .imageUrl(s3ImageUrl)
                 .build();
     }
 

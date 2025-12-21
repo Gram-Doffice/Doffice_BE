@@ -30,8 +30,8 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("Teens API")
-                .description("Teens API Swagger UI")
+                .title("Doffice API")
+                .description("Doffice API Swagger UI")
                 .version("1.0.0");
     }
 }

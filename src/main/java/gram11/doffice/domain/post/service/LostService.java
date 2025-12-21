@@ -61,7 +61,7 @@ public class LostService {
                 .title(request.title())
                 .content(request.content())
                 .user(user)
-                .imageUrl(imagesUrl)
+                .imageKey(imagesUrl)
                 .postType(PostType.LOST)
                 .build();
         postRepository.save(post);
@@ -91,7 +91,7 @@ public class LostService {
         post.updatePost(request.title(), request.content(), updatedImages);
 
         // 삭제 로직 (기존 이미지 중 유지 목록에 없는 것들)
-        List<String> currentImages = post.getImageUrl();
+        List<String> currentImages = post.getImageKey();
         currentImages.stream()
                 .filter(url -> !request.keepImagesUrl().contains(url))
                 .forEach(s3UploadService::delete); // S3에서 실제 파일 삭제
