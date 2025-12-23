@@ -16,8 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.swing.*;
@@ -26,78 +24,56 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gram11.doffice.global.config.SecurityConfig.PERMITTED_AUTH;
-
-@Component
 @RequiredArgsConstructor
-// OncePerRequestFilter: 상속받은 클래스가 해당 필터를 한 번 실행할 수 있도록 함
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        String method = request.getMethod();
-
-        if ("OPTIONS".equals(method)) {
-            return true;
-        }
-
-        return Arrays.stream(PERMITTED_AUTH)
-                .anyMatch(permit -> matcher.match(permit, path));
-
-    }
-
-    @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, // HTTP request를 담고 있는 클래스
-                                    @NonNull HttpServletResponse response, // HTTP response를 담는 클래스
-                                    @NonNull FilterChain chain // Spring의 Filter들을 체인처럼 연결해 놓은 클래스
-    ) throws ServletException, IOException {
-        String jwt = jwtTokenProvider.getJwt(request);
-
-        if (jwt == null) {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain chain) throws ServletException, IOException {
+        if (request.getServletPath().startsWith("/auth")) {
             chain.doFilter(request, response);
             return;
         }
 
+        String jwt = jwtTokenProvider.getJwt(request);
+
         try {
-            // 토큰 파싱 및 유효성 검사
-            Claims claims = jwtTokenProvider.parse(jwt);
+            if (jwt != null) {
+                Claims claims = jwtTokenProvider.parse(jwt);
+                String tokenType = claims.get("tokenType", String.class);
+                String username = claims.getSubject();
+                Long userId = claims.get("userId", Long.class);
+                String authoritiesStr = claims.get("authorities", String.class);
 
-            String tokenType = claims.get("tokenType", String.class);
-            String username = claims.getSubject();
-            Long userId = claims.get("userId", Long.class);
-            String authoritiesStr = claims.get("authorities", String.class);
+                if ("ACCESS".equals(tokenType) && username != null && userId != null) {
+                    if (jwtTokenProvider.isBlackList(jwt)) {
+                        throw InvalidJwtException.EXCEPTION;
+                    }
 
-            // ACCESS 토큰이고 필수 클레임이 존재할 경우
-            if ("ACCESS".equals(tokenType) && username != null && userId != null) {
+                    List<GrantedAuthority> authorities = Arrays.stream(authoritiesStr.split(","))
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
 
-                if (jwtTokenProvider.isBlackList(jwt)) {
-                    throw InvalidJwtException.EXCEPTION;
+                    UserDetails userDetails = new CustomUserDetails(userId, username, authorities);
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-
-                // 권한 파싱
-                List<GrantedAuthority> authorities = Arrays.stream(authoritiesStr.split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-
-                UserDetails userDetails = new CustomUserDetails(userId, username, authorities);
-
-                // 인증 객체 생성 및 Security Context에 설정
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
             chain.doFilter(request, response);
+
         } catch (ExpiredJwtException e) {
             throw ExpiredJwtException.EXCEPTION;
         } catch (InvalidJwtException e) {
             throw InvalidJwtException.EXCEPTION;
+        } catch (Exception e) {
+            throw e;
         }
     }
 }

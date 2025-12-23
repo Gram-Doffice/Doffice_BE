@@ -6,6 +6,7 @@ import gram11.doffice.domain.post.domain.type.PostType;
 import gram11.doffice.domain.post.exception.ImageExceededException;
 import gram11.doffice.domain.post.exception.NoAuthorException;
 import gram11.doffice.domain.post.exception.PostNotFoundException;
+import gram11.doffice.domain.post.exception.WrongPostTypeException;
 import gram11.doffice.domain.post.presentaton.dto.request.CreateLostRequest;
 import gram11.doffice.domain.post.presentaton.dto.request.UpdateLostRequest;
 import gram11.doffice.domain.post.presentaton.dto.response.PostListResponse;
@@ -73,28 +74,41 @@ public class LostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
+        if (post.getPostType() != PostType.LOST) {
+            throw WrongPostTypeException.EXCEPTION;
+        }
+
         // 권한 없음 예외
         if (!post.getUser().getId().equals(userId)) {
             throw NoAuthorException.EXCEPTION;
         }
 
         // 이미지 개수 검사
-        int totalSize = request.keepImagesUrl().size() + ((images != null) ? images.size() : 0);
+        List<String> keepKeys = new ArrayList<>();
+        if (request.keepImagesUrl() != null) {
+            for (String url : request.keepImagesUrl()) {
+                keepKeys.add(s3UploadService.extractFileKey(url));
+            }
+        }
+        List<MultipartFile> newImages = (images != null) ? images : new ArrayList<>();
+
+        int totalSize = keepKeys.size() + newImages.size();
         validateImageCount(totalSize);
 
-        // S3 업로드
-        List<String> newImagesUrl = uploadImage(images);
+        // 이미지 업로드 및 리스트 합치기
+        List<String> updatedImages = new ArrayList<>(keepKeys);
+        List<String> newImagesUrl = uploadImage(newImages);
+        updatedImages.addAll(newImagesUrl);
 
         // DB에 저장
-        List<String> updatedImages = new ArrayList<>(request.keepImagesUrl());
-        updatedImages.addAll(newImagesUrl);
         post.updatePost(request.title(), request.content(), updatedImages);
 
         // 삭제 로직 (기존 이미지 중 유지 목록에 없는 것들)
-        List<String> currentImages = post.getImageKey();
-        currentImages.stream()
-                .filter(url -> !request.keepImagesUrl().contains(url))
-                .forEach(s3UploadService::delete); // S3에서 실제 파일 삭제
+        if (request.keepImagesUrl() != null && post.getImageKey() != null) {
+            post.getImageKey().stream()
+                    .filter(savedKey -> !keepKeys.contains(savedKey))
+                    .forEach(s3UploadService::delete);
+        }
     }
 
     private List<String> uploadImage(List<MultipartFile> images){
@@ -103,9 +117,16 @@ public class LostService {
             return Collections.emptyList();
         }
 
+        List<MultipartFile> validFiles = images.stream()
+                .filter(file -> file != null && !file.isEmpty()) // 실제 데이터가 있는 파일만 남김
+                .toList();
+
+        if (validFiles.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         // 이미지 업로드 및 생성된 리스트 리턴
-        return images.stream()
-                .filter(file -> !file.isEmpty())
+        return validFiles.stream()
                 .map(file -> s3UploadService.upload(file, S3BucketFolder.LOST.getPath()))
                 .collect(Collectors.toList());
     }

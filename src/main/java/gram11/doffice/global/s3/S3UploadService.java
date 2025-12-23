@@ -3,6 +3,7 @@ package gram11.doffice.global.s3;
 import gram11.doffice.global.s3.exception.BadFileExtensionException;
 import gram11.doffice.global.s3.exception.EmptyFileException;
 import gram11.doffice.global.s3.exception.FailUploadImageException;
+import gram11.doffice.global.s3.exception.WrongFileUrlException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +13,12 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
-import java.io.InputStream;
+import java.net.URL;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Set;
@@ -105,6 +105,24 @@ public class S3UploadService {
             log.error("S3 파일 삭제 실패: {}", e.getMessage());
         } catch (Exception e) {
             log.error("S3 파일 삭제 실패: {}", e.getMessage());
+        }
+    }
+
+    public String extractFileKey(String url) {
+        if (url == null || url.isBlank()) {
+            return "";
+        }
+        try {
+            String pathOnly = url.split("\\?")[0];
+            int index = pathOnly.indexOf(".com/");
+
+            if (index != -1) {
+                return pathOnly.substring(index + 1);
+            }
+            return pathOnly;
+        } catch (Exception e) {
+            log.warn("wrong image url: {}", url);
+            throw WrongFileUrlException.EXCEPTION;
         }
     }
 }

@@ -5,6 +5,7 @@ import gram11.doffice.domain.post.domain.repository.PostRepository;
 import gram11.doffice.domain.post.domain.type.PostType;
 import gram11.doffice.domain.post.exception.NoAuthorException;
 import gram11.doffice.domain.post.exception.PostNotFoundException;
+import gram11.doffice.domain.post.exception.WrongPostTypeException;
 import gram11.doffice.domain.post.presentaton.dto.request.CreateNoticeRequest;
 import gram11.doffice.domain.post.presentaton.dto.request.UpdateNoticeRequest;
 import gram11.doffice.domain.post.presentaton.dto.response.PostListResponse;
@@ -59,6 +60,10 @@ public class NoticeService {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+
+        if (post.getPostType() != PostType.NOTICE) {
+            throw WrongPostTypeException.EXCEPTION;
+        }
 
         if (!post.getUser().getId().equals(userId)) {
             throw NoAuthorException.EXCEPTION; // 권한 없음 예외
