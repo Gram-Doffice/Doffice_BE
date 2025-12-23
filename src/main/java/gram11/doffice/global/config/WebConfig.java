@@ -10,10 +10,12 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "https://gram-doffice.ncloud.sbs",
-                        "http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
+                        "http://localhost:3000",
+                        "http://localhost:5173",
+                        "http://localhost",
+                        "https://gram-doffice.ncloud.sbs"
+                )
+                .allowedMethods("*")
                 .allowCredentials(true);
     }
 }
