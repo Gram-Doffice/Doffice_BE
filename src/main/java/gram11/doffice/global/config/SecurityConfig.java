@@ -1,9 +1,11 @@
 package gram11.doffice.global.config;
 
 import gram11.doffice.global.error.GlobalExceptionFilter;
+import gram11.doffice.global.error.exception.ResponseWithErrorCode;
 import gram11.doffice.global.error.handler.CustomAccessDeniedHandler;
 import gram11.doffice.global.error.handler.CustomAuthenticationEntryPoint;
 import gram11.doffice.global.jwt.JwtTokenFilter;
+import gram11.doffice.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +23,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -29,8 +30,8 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenFilter jwtTokenFilter;
-    private final GlobalExceptionFilter globalExceptionFilter;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ResponseWithErrorCode responseWithErrorCode;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -61,8 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/post/**").permitAll()
                         .anyRequest().authenticated())
 
-                .addFilterBefore(globalExceptionFilter, LogoutFilter.class)
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(globalExceptionFilter(), JwtTokenFilter.class)
                 .build();
     }
 
@@ -76,5 +77,15 @@ public class SecurityConfig {
         // 인증 처리를 위한 AuthenticationManager를 Bean 등록
         // 주로 로그인 시도 시 사용자 인증 로직에 사용됨
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public GlobalExceptionFilter globalExceptionFilter() {
+        return new GlobalExceptionFilter(responseWithErrorCode);
+    }
+
+    @Bean
+    public JwtTokenFilter jwtTokenFilter() {
+        return new JwtTokenFilter(jwtTokenProvider);
     }
 }

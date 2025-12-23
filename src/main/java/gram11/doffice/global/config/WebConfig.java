@@ -13,7 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:3000",
                         "http://localhost:5173",
                         "http://localhost",
-                        "https://gram-doffice.ncloud.sbs"
+                        "https://gram-doffice.ncloud.sbs",
+                        "https://doffice.ncloud.sbs"
                 )
                 .allowedMethods("*")
                 .allowCredentials(true);

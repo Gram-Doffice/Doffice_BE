@@ -13,6 +13,8 @@ public enum ErrorCode {
     BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "잘못된 파일 확장자입니다"),
     MAX_UPLOAD_FILE(HttpStatus.BAD_REQUEST, "최대 업로드 파일 크기를 초과했습니다"),
     IMAGE_EXCEEDED(HttpStatus.BAD_REQUEST, "이미지는 최대 3개까지만 업로드 가능합니다."),
+    WRONG_POST_TYPE(HttpStatus.BAD_REQUEST, "잘못된 POST TYPE으로 요청했습니다."),
+    WRONG_FILE_URL(HttpStatus.BAD_REQUEST, "잘못된 URL 형식입니다."),
 
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다"),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다"),
