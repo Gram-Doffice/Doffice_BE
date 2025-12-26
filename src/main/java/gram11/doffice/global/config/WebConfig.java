@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://gram-doffice.ncloud.sbs",
                         "https://doffice.ncloud.sbs"
                 )
-                .allowedMethods("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
     }
 }

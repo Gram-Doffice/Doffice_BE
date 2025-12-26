@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler))
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PERMITTED_AUTH).permitAll()
                         .requestMatchers(HttpMethod.GET, "/post/**").permitAll()
                         .anyRequest().authenticated())
