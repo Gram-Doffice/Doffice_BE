@@ -27,6 +27,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다"),
 
+    I_AM_A_TEAPOT(HttpStatus.I_AM_A_TEAPOT, "서버는 찻주전자에요"),
+
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류"),
     FAIL_UPLOAD_IMAGE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 처리 중 오류가 발생했습니다");
 

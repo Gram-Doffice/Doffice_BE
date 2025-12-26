@@ -72,8 +72,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throw ExpiredJwtException.EXCEPTION;
         } catch (InvalidJwtException e) {
             throw InvalidJwtException.EXCEPTION;
-        } catch (Exception e) {
-            throw e;
         }
     }
 }

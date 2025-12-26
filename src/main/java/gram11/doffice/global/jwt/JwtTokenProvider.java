@@ -10,6 +10,7 @@ import gram11.doffice.global.jwt.exception.ExpiredJwtException;
 import gram11.doffice.global.jwt.exception.InvalidJwtException;
 import gram11.doffice.global.redis.RedisService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -95,9 +96,9 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        } catch (io.jsonwebtoken.ExpiredJwtException e){
+        } catch (ExpiredJwtException e){
             throw ExpiredJwtException.EXCEPTION;
-        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             throw InvalidJwtException.EXCEPTION;
         }
     }

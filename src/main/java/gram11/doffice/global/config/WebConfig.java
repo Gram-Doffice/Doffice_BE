@@ -12,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000",
                         "http://localhost:5173",
+                        "http://localhost:5174",
                         "http://localhost",
                         "https://gram-doffice.ncloud.sbs",
                         "https://doffice.ncloud.sbs"
