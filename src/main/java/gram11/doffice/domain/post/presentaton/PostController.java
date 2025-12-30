@@ -76,7 +76,7 @@ public class PostController {
     public ResponseEntity<Void> updateNotice(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("post_id") Long id,
-            @Valid @RequestPart("request") UpdateNoticeRequest request) {
+            @Valid @RequestBody UpdateNoticeRequest request) {
         noticeService.updateNotice(id, request, userDetails.getId());
         return ResponseEntity.noContent().build();
     }
