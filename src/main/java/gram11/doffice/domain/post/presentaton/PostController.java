@@ -50,7 +50,6 @@ public class PostController {
     }
 
     // 공지글 작성
-    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/write-notice")
     public ResponseEntity<Void> createNotice(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -60,7 +59,6 @@ public class PostController {
     }
 
     // 분실물 작성
-    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/write-lost")
     public ResponseEntity<Void> createLost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -71,7 +69,6 @@ public class PostController {
     }
 
     // 공지글 수정
-    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/modify-notice/{post_id}")
     public ResponseEntity<Void> updateNotice(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -82,7 +79,6 @@ public class PostController {
     }
 
     // 분실물 수정
-    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/modify-lost/{post_id}")
     public ResponseEntity<Void> updateLost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -100,7 +96,6 @@ public class PostController {
     }
 
     // 게시글 삭제
-    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{post_id}")
     public ResponseEntity<Void> deleteNotice(
             @AuthenticationPrincipal CustomUserDetails userDetails,
