@@ -29,7 +29,7 @@ public class PostService {
 
         List<String> originalImageUrl = post.getImageKey() != null ? post.getImageKey() : Collections.emptyList();
         List<String> s3ImageUrl = originalImageUrl.stream()
-                .map(s3UploadService::generatePresignedUrl)
+                .map(s3UploadService::returnImageUrl)
                 .toList();
 
         return PostDetailResponse.builder()

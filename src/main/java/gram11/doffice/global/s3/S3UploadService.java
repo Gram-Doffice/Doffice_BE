@@ -11,14 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
-import java.net.URL;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Set;
@@ -41,7 +38,7 @@ public class S3UploadService {
     public String verifyFile(MultipartFile file) {
         if (file.isEmpty() || file.getOriginalFilename() == null) throw EmptyFileException.EXCEPTION;
 
-        final Set<String> allowedExtensions = Set.of("jpg", "jpeg", "png", "gif");
+        final Set<String> allowedExtensions = Set.of("jpg", "jpeg", "png", "gif", "webp");
 
         String originalName = file.getOriginalFilename();
         String ext = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase(Locale.getDefault());
@@ -58,7 +55,7 @@ public class S3UploadService {
         String fileKey = path + randomName + "." + ext;
 
         try {
-            software.amazon.awssdk.services.s3.model.PutObjectRequest putObjectRequest = software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(fileKey)
                     .contentType(file.getContentType())
@@ -71,21 +68,13 @@ public class S3UploadService {
         }
     }
 
-    public String generatePresignedUrl(String fileKey) {
-        // 1. URL 만료 시간을 1시간으로 설정
-        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofHours(1))
-                .getObjectRequest(GetObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(fileKey)
-                        .build())
+    public String returnImageUrl(String fileKey) {
+        GetUrlRequest getUrlRequest = GetUrlRequest.builder()
+                .bucket(bucket)
+                .key(fileKey)
                 .build();
 
-        // 2. Presigner를 통해 사전 서명된 URL 생성
-        PresignedGetObjectRequest presignedObject = s3Presigner.presignGetObject(presignRequest);
-
-        // 3. 서명된 URL 반환
-        return presignedObject.url().toString();
+        return s3Client.utilities().getUrl(getUrlRequest).toString();
     }
 
     public void delete(String fileUrl) {

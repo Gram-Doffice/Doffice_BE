@@ -3,6 +3,10 @@ package gram11.doffice.global.error.handler;
 import gram11.doffice.global.error.exception.DofficeException;
 import gram11.doffice.global.error.exception.ErrorCode;
 import gram11.doffice.global.error.exception.ErrorResponse;
+import gram11.doffice.global.webhook.DiscordWebhookClient;
+import gram11.doffice.global.webhook.DiscordWebhookRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,9 +23,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.core.NestedExceptionUtils.buildMessage;
+
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final DiscordWebhookClient discordWebhookClient;
 
     // @Valid 검증 실패 처리
     @Override
@@ -83,8 +92,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // 예상치 못한 오류 처리
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
         log.error("Unexpected Exception : {}", e.getMessage());
+
+        sendDiscordAlert(e, request);
 
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         ErrorResponse response = ErrorResponse.builder()
@@ -95,5 +106,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(response);
+    }
+
+    private void sendDiscordAlert(Exception e, HttpServletRequest request) {
+        try {
+            String message = buildMessage(e, request);
+            discordWebhookClient.send(
+                    new DiscordWebhookRequest(message)
+            );
+        } catch (Exception ex) {
+            log.error("Failed to send discord webhook", ex);
+        }
+    }
+
+    private String buildMessage(Exception e, HttpServletRequest request) {
+        return "Internal Server Error - Error: %s - URI: %s - Method: %s".formatted(e.toString(), request.getRequestURI(), request.getMethod());
     }
 }
