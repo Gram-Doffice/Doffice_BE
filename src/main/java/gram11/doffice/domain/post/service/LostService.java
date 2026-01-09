@@ -15,6 +15,10 @@ import gram11.doffice.domain.user.domain.repository.UserRepository;
 import gram11.doffice.global.s3.S3BucketFolder;
 import gram11.doffice.global.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,17 +38,16 @@ public class LostService {
 
     // 분실물 목록 조회
     @Transactional(readOnly = true)
-    public List<PostListResponse> filterLost() {
-        List<Post> posts = postRepository.findByPostType(PostType.LOST);
+    public Page<PostListResponse> filterLost(int page) {
+        Pageable pageable = PageRequest.of(page, 12, Sort.by("id").descending());
+        Page<Post> posts = postRepository.findAllByPostType(PostType.LOST, pageable);
 
-        return posts.stream()
-                .map(post -> PostListResponse.builder()
-                        .id(post.getId())
-                        .title(post.getTitle())
-                        .createAt(post.getCreatedAt())
-                        .type(post.getPostType().toString())
-                        .build())
-                .toList();
+        return posts.map(post -> PostListResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .createAt(post.getCreatedAt())
+                .type(post.getPostType().toString())
+                .build());
     }
 
     // 분실물 게시글 작성

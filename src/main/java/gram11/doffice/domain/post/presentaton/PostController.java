@@ -12,6 +12,7 @@ import gram11.doffice.domain.post.service.PostService;
 import gram11.doffice.global.config.auth.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,20 +32,26 @@ public class PostController {
 
     // 전체 게시글 조회
     @GetMapping
-    public ResponseEntity<List<PostListResponse>> getAllNotice() {
-        return ResponseEntity.ok(postService.getAllPost());
+    public ResponseEntity<Page<PostListResponse>> getAllNotice(
+            @RequestParam("page") int page
+    ) {
+        return ResponseEntity.ok(postService.getAllPost(page));
     }
 
     // 공지사항 목록 조회
     @GetMapping("/notice")
-    public ResponseEntity<List<PostListResponse>> filterNotice() {
-        return ResponseEntity.ok(noticeService.filterNotice());
+    public ResponseEntity<Page<PostListResponse>> filterNotice(
+            @RequestParam("page") int page
+    ) {
+        return ResponseEntity.ok(noticeService.filterNotice(page));
     }
 
     // 분실물 목록 조회
     @GetMapping("/lost")
-    public ResponseEntity<List<PostListResponse>> filterLost() {
-        return ResponseEntity.ok(lostService.filterLost());
+    public ResponseEntity<Page<PostListResponse>> filterLost(
+            @RequestParam("page") int page
+    ) {
+        return ResponseEntity.ok(lostService.filterLost(page));
     }
 
     // 공지글 작성

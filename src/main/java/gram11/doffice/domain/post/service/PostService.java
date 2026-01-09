@@ -8,6 +8,10 @@ import gram11.doffice.domain.post.exception.PostNotFoundException;
 import gram11.doffice.domain.post.presentaton.dto.response.PostListResponse;
 import gram11.doffice.global.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,17 +49,16 @@ public class PostService {
 
     // 게시글 전체 조회
     @Transactional(readOnly = true)
-    public List<PostListResponse> getAllPost() {
-        List<Post> posts = postRepository.findAll();
+    public Page<PostListResponse> getAllPost(int page) {
+        Pageable pageable = PageRequest.of(page, 12, Sort.by("id").descending());
+        Page<Post> posts = postRepository.findAll(pageable);
 
-        return posts.stream()
-                .map(post -> PostListResponse.builder()
+        return posts.map(post -> PostListResponse.builder()
                         .id(post.getId())
                         .title(post.getTitle())
                         .createAt(post.getCreatedAt())
                         .type(post.getPostType().toString())
-                        .build())
-                .toList();
+                        .build());
     }
 
     // 게시글 삭제
