@@ -33,7 +33,7 @@ public class PostController {
     // 전체 게시글 조회
     @GetMapping
     public ResponseEntity<Page<PostListResponse>> getAllNotice(
-            @RequestParam("page") int page
+            @RequestParam(value = "page", defaultValue = "1") int page
     ) {
         return ResponseEntity.ok(postService.getAllPost(page));
     }
@@ -41,7 +41,7 @@ public class PostController {
     // 공지사항 목록 조회
     @GetMapping("/notice")
     public ResponseEntity<Page<PostListResponse>> filterNotice(
-            @RequestParam("page") int page
+            @RequestParam(value = "page", defaultValue = "1") int page
     ) {
         return ResponseEntity.ok(noticeService.filterNotice(page));
     }
@@ -49,7 +49,7 @@ public class PostController {
     // 분실물 목록 조회
     @GetMapping("/lost")
     public ResponseEntity<Page<PostListResponse>> filterLost(
-            @RequestParam("page") int page
+            @RequestParam(value = "page", defaultValue = "1") int page
     ) {
         return ResponseEntity.ok(lostService.filterLost(page));
     }
