@@ -14,9 +14,7 @@ import gram11.doffice.domain.user.domain.repository.UserRepository;
 import gram11.doffice.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,16 +28,17 @@ public class NoticeService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public Page<PostListResponse> filterNotice(int page) {
-        Pageable pageable = PageRequest.of(page, 12, Sort.by("id").descending());
+    public List<PostListResponse> filterNotice(Pageable pageable) {
         Page<Post> posts = postRepository.findAllByPostType(PostType.NOTICE, pageable);
 
-        return posts.map(post -> PostListResponse.builder()
+        return posts.stream()
+                .map(post -> PostListResponse.builder()
                         .id(post.getId())
                         .title(post.getTitle())
                         .createAt(post.getCreatedAt())
                         .type(post.getPostType().toString())
-                        .build());
+                        .build())
+                .toList();
     }
 
     // 공지사항 작성

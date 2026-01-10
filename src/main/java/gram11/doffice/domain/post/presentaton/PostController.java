@@ -13,6 +13,9 @@ import gram11.doffice.global.config.auth.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,26 +35,26 @@ public class PostController {
 
     // 전체 게시글 조회
     @GetMapping
-    public ResponseEntity<Page<PostListResponse>> getAllNotice(
-            @RequestParam(value = "page", defaultValue = "1") int page
+    public ResponseEntity<List<PostListResponse>> getAllPost(
+            @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ResponseEntity.ok(postService.getAllPost(page));
+        return ResponseEntity.ok(postService.getAllPost(pageable));
     }
 
     // 공지사항 목록 조회
     @GetMapping("/notice")
-    public ResponseEntity<Page<PostListResponse>> filterNotice(
-            @RequestParam(value = "page", defaultValue = "1") int page
+    public ResponseEntity<List<PostListResponse>> filterNotice(
+            @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ResponseEntity.ok(noticeService.filterNotice(page));
+        return ResponseEntity.ok(noticeService.filterNotice(pageable));
     }
 
     // 분실물 목록 조회
     @GetMapping("/lost")
-    public ResponseEntity<Page<PostListResponse>> filterLost(
-            @RequestParam(value = "page", defaultValue = "1") int page
+    public ResponseEntity<List<PostListResponse>> filterLost(
+            @PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ResponseEntity.ok(lostService.filterLost(page));
+        return ResponseEntity.ok(lostService.filterLost(pageable));
     }
 
     // 공지글 작성
