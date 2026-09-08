@@ -73,4 +73,4 @@ cloud:
 
 discord:
   webhook:
-    url: https://discord.com/api/webhooks/1458012833127207037/2Zqy0R2ca9PSUIAoeWEPdvjXjdmBAYQMAEKY8FWeM1qcnFYuepibtcHLjwd11CzEuVhy
+    url: ${DISCORD_WEBHOOK_URL}
